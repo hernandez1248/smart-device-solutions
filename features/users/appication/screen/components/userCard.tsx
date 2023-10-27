@@ -1,13 +1,19 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { IconButton } from 'react-native-paper';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import User from '../../../domain/entities/user';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 type CardProps = {
   user: User;
 };
 
 const UserCard: React.FC<CardProps> = (props) => {
+  const [menuVisible, setMenuVisible] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuVisible(!menuVisible);
+  };
+
   return (
     <View>
       <View style={styles.row}>
@@ -17,37 +23,55 @@ const UserCard: React.FC<CardProps> = (props) => {
         <Text style={[styles.column2, styles.boldText]}>
           {props.user.rol}
         </Text>
-        <View style={styles.actions}>
-          <IconButton
-            icon="eye"
-            iconColor='green'
-            size={20}
-            onPress={() => {
-              // Acción al presionar el botón de visualizar
-            }}
-          />
-          <IconButton
-            icon="pencil"
-            iconColor='blue'
-            size={20}
-            onPress={() => {
-              // Acción al presionar el botón de editar
-            }}
-          />
-          <IconButton
-            icon="delete"
-            iconColor="red"
-            size={20}
-            onPress={() => {
-              // Acción al presionar el botón de eliminar
-            }}
-          />
-        </View>
+        <TouchableOpacity onPress={toggleMenu}>
+          <FontAwesome5 name="ellipsis-h" style={styles.menuButton} />
+        </TouchableOpacity>
       </View>
+      {menuVisible && (
+        <View style={styles.menu}>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => {
+              // Acción al presionar "Ver"
+              toggleMenu();
+            }}
+          >
+            <View style={styles.menuView}>
+              <FontAwesome5 name="eye" style={[styles.menuIcon, { color: 'green' }]} />
+              <Text style={styles.menuText}>Ver</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => {
+              // Acción al presionar "Editar"
+              toggleMenu();
+            }}
+          >
+            <View style={styles.menuView}>
+              <FontAwesome5 name="edit" style={[styles.menuIcon, { color: 'blue' }]} />
+              <Text style={styles.menuText}>Editar</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => {
+              // Acción al presionar "Eliminar"
+              toggleMenu();
+            }}
+          >
+            <View style={styles.menuView}>
+              <FontAwesome5 name="trash" style={[styles.menuIcon, { color: 'red' }]} />
+              <Text style={styles.menuText}>Eliminar</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      )}
       <View style={styles.horizontalLine} />
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   row: {
@@ -63,19 +87,46 @@ const styles = StyleSheet.create({
   column2: {
     flex: 1,
     fontSize: 14,
-    marginLeft: 10, // Ajusta el espacio entre columnas aquí
+    marginLeft: 10,
     marginTop: 12
-  },
-  actions: {
-    flexDirection: 'row',
-    marginRight: -20, 
-    marginLeft: -50, // Ajusta el espacio entre botones aquí
   },
   header: {
     fontWeight: 'bold',
   },
   boldText: {
     fontWeight: 'bold',
+  },
+  menuButton: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'gray',
+  },
+  menu: {
+    backgroundColor: 'white',
+    elevation: 5,
+    position: 'absolute',
+    top: 35,
+    right: 25,
+    zIndex: 1,
+    borderRadius: 10
+  },
+  menuItem: {
+    padding: 10,
+    borderBottomColor: 'gray',
+    borderBottomWidth: 1,
+  },
+  menuIcon: {
+    fontSize: 20,
+    marginRight: 10,
+    marginLeft: 20,
+  },
+  menuView: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  menuText: {
+    marginLeft: 10,
   },
   horizontalLine: {
     borderBottomColor: 'gray',

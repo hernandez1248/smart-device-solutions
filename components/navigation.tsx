@@ -4,10 +4,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from '@expo/vector-icons';
 
 // Importa tus pantallas
-import UserScreen from "../features/users/appication/screen/usersScreen";
-import DeviceScreen from "../features/devices/appication/screens/devicesScreen";
+ import UserScreen from "../features/users/appication/screen/usersScreen";
+/*import DeviceScreen from "../features/devices/appication/screens/devicesScreen";
 import ComponentScreen from "../features/components/appication/screens/componentsScreen";
-import OrderScreen from "../features/orders/application/screens/ordersScreen";
+import OrderScreen from "../features/orders/application/screens/ordersScreen"; */
 
 const Tab = createBottomTabNavigator();
 
@@ -48,10 +48,10 @@ function MyTabs() {
         component={UserScreen}
         options={{ headerShown: false, tabBarLabel: "Usuarios" }}
       />
-      <Tab.Screen
+       {/*<Tab.Screen
         name="Orders"
-        component={OrderScreen}
-        options={{ headerShown: false, tabBarLabel: "Ordenes" }}
+        component={AddUserScreen}
+        options={{ headerShown: false, tabBarLabel: "Agregar" }}
       /> 
       <Tab.Screen
         name="Devices"
@@ -62,7 +62,7 @@ function MyTabs() {
         name="Components"
         component={ComponentScreen}
         options={{ headerShown: false, tabBarLabel: "Componentes" }}
-      /> 
+      />  */}
       
     </Tab.Navigator>
   );
