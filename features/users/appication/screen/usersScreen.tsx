@@ -4,8 +4,15 @@ import { ActivityIndicator, AppBar } from '@react-native-material/core';
 import { Searchbar, IconButton } from 'react-native-paper';
 import UserCard from './components/userCard';
 import { UsersProvider, useUsersState } from '../provider/usersProvider';
+import CustomModal from './components/addUser';
 
 function UsersScreenView() {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const showModal = () => {
+    setModalVisible(true);
+  };
+  
   const { 
     users, 
     loading,
@@ -62,15 +69,13 @@ function UsersScreenView() {
 
       {/* Botón de agregar */}
       <IconButton
-        icon="plus"
-        onPress={() => {
-          // Acción al presionar el botón de agregar nuevo usuario
-          // Puedes abrir un modal, navegar a una nueva pantalla, etc.
-        }}
+        icon="account-plus"
+        onPress={showModal}
         style={styles.addButton}
         iconColor="#ffffff"
         size={30}
       />
+      <CustomModal modalVisible={modalVisible} setModalVisible={setModalVisible} />
     </View>
   );
 }
