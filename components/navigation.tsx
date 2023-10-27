@@ -5,6 +5,7 @@ import { AntDesign } from '@expo/vector-icons';
 
 // Importa tus pantallas
  import UserScreen from "../features/users/appication/screen/usersScreen";
+ import ComponentScreen from "../features/components/application/screens/componentScreen";
 /*import DeviceScreen from "../features/devices/appication/screens/devicesScreen";
 import ComponentScreen from "../features/components/appication/screens/componentsScreen";
 import OrderScreen from "../features/orders/application/screens/ordersScreen"; */
@@ -57,12 +58,12 @@ function MyTabs() {
         name="Devices"
         component={DeviceScreen}
         options={{ headerShown: false, tabBarLabel: "Dispositivos"}}
-      />
+      />*/}
      <Tab.Screen
         name="Components"
         component={ComponentScreen}
         options={{ headerShown: false, tabBarLabel: "Componentes" }}
-      />  */}
+      />  
       
     </Tab.Navigator>
   );

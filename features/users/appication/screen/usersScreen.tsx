@@ -4,7 +4,7 @@ import { ActivityIndicator, AppBar } from '@react-native-material/core';
 import { Searchbar, IconButton } from 'react-native-paper';
 import UserCard from './components/userCard';
 import { UsersProvider, useUsersState } from '../provider/usersProvider';
-import CustomModal from './components/addUser';
+import AddUserView from './components/addUser';
 
 function UsersScreenView() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -75,7 +75,7 @@ function UsersScreenView() {
         iconColor="#ffffff"
         size={30}
       />
-      <CustomModal modalVisible={modalVisible} setModalVisible={setModalVisible} />
+      <AddUserView modalVisible={modalVisible} setModalVisible={setModalVisible} />
     </View>
   );
 }
