@@ -1,39 +1,37 @@
 import React, { useState } from "react";
 import { View, Modal, Text, TextInput, StyleSheet, Pressable, Dimensions, Alert } from "react-native";
-import { AddUserProvider, useAddUserState } from "../../provider/addUsersProvider";
+import { AddDeviceProvider, useAddDeviceState } from "../../providers/addDevicesProvider";
 
-interface AddUserViewProps {
+interface AddDeviceViewProps {
   modalVisible: boolean;
   setModalVisible: (visible: boolean) => void;
 }
 
-const AddUserView: React.FC<AddUserViewProps> = ({
-  modalVisible,
-  setModalVisible,
-}) => {
+const AddDeviceView: React.FC<AddDeviceViewProps> = ({modalVisible,setModalVisible}) => {
   const {
     message,
     loading,
     saving,
     success,
-    user,
+    device,
     errors,
 
-    setUserProp,
-    saveUser,
-  } = useAddUserState();
+    setDeviceProp,
+    saveDevice,
+  } = useAddDeviceState();
 
-  const handleSaveUser = () => {
-    saveUser(() => {
+  const handleSaveDevice = () => {
+    saveDevice(() => { });
       setModalVisible(false); // Cierra el modal primero
-  
+      
+      
       // Retrasa la aparición de la alerta
       setTimeout(() => {
-        Alert.alert('Usuario Registrado', 'El usuario se ha registrado correctamente.', [
+        Alert.alert('Dispositivo Registrado', 'El dispositivo se ha registrado correctamente', [
           { text: 'OK', onPress: () => {} },
         ]);
       }, 500); // Puedes ajustar el tiempo de retardo según tus necesidades
-    });
+   
   };
 
   return (
@@ -48,97 +46,52 @@ const AddUserView: React.FC<AddUserViewProps> = ({
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.title}>Registrar Usuario</Text>
+            <Text style={styles.title}>Registrar Dispositivo</Text>
             <View>
               {/*<Text style={success ? styles.success : styles.alert}>{message}</Text>*/}
 
-              <Text style={styles.label}>Nombre:</Text>
+              <Text style={styles.label}>Marca:</Text>
               <TextInput
-                style={[styles.textInput, (errors?.name ? styles.textError : null)]}
-                placeholder=" Ingresa el nombre"
-                value={user?.name || ""}
+                style={[styles.textInput, (errors?.brand ? styles.textError : null)]}
+                placeholder=" Ingresa la marca del dispositivo"
+                value={device?.brand || ""}
                 onChangeText={(text) => {
-                  setUserProp("name", text);
+                  setDeviceProp("brand", text);
                 }}
                 textContentType="name"
               ></TextInput>
-                {errors?.name ? (
-                <Text style={styles.textError}>{errors.name}</Text>
+                {errors?.brand ? (
+                <Text style={styles.textError}>{errors.brand}</Text>
               ) : null }
             </View>
             <View>
-              <Text style={styles.label}>Apellido:</Text>
+              <Text style={styles.label}>Modelo:</Text>
               <TextInput
-                style={[styles.textInput, (errors?.lastName ? styles.textError : null)]}
-                placeholder=" Ingresa el apellido"
-                value={user?.lastName || ""}
+                style={[styles.textInput, (errors?.model ? styles.textError : null)]}
+                placeholder=" Ingresa el modelo del dispositivo"
+                value={device?.model || ""}
                 onChangeText={(text) => {
-                  setUserProp("lastName", text);
+                  setDeviceProp("model", text);
                 }}
                 textContentType="name"
               ></TextInput>
-              {errors?.lastName ? (
-                <Text style={styles.textError}>{errors.lastName}</Text>
+              {errors?.model ? (
+                <Text style={styles.textError}>{errors.model}</Text>
               ) : null }
             </View>
             <View>
-              <Text style={styles.label}>Teléfono:</Text>
+              <Text style={styles.label}>Categoria:</Text>
               <TextInput
-                style={[styles.textInput, (errors?.phone ? styles.textError : null)]}
-                placeholder=" Ingresa el teléfono"
-                value={user?.phone || ""}
+                style={[styles.textInput, (errors?.deviceCategoryId ? styles.textError : null)]}
+                placeholder=" Ingresa la categoria a la que pertenece"
+                value={device?.deviceCategoryId?.toString()  || undefined}
                 onChangeText={(text) => {
-                  setUserProp("phone", text);
+                  setDeviceProp("deviceCategoryId", text);
                 }}
-                textContentType="name"
-              ></TextInput>
-              {errors?.phone ? (
-                <Text style={styles.textError}>{errors.phone}</Text>
-              ) : null }
-            </View>
-            <View>
-              <Text style={styles.label}>Correo:</Text>
-              <TextInput
-                style={[styles.textInput, (errors?.email ? styles.textError : null)]}
-                placeholder=" Ingresa el correo"
-                value={user?.email || ""}
-                onChangeText={(text) => {
-                  setUserProp("email", text);
-                }}
-                textContentType="emailAddress"
+                textContentType="creditCardNumber"
               />
-              {errors?.email ? (
-                <Text style={styles.textError}>{errors.email}</Text>
-              ) : null }
-            </View>
-            <View>
-              <Text style={styles.label}>Contraseña:</Text>
-              <TextInput
-                style={[styles.textInput, (errors?.password ? styles.textError : null)]}
-                placeholder=" Ingresa la contraseña"
-                value={user?.password || ""}
-                onChangeText={(text) => {
-                  setUserProp("password", text);
-                }}
-                textContentType="name"
-              />
-              {errors?.password ? (
-                <Text style={styles.textError}>{errors.password}</Text>
-              ) : null }
-            </View>
-            <View>
-              <Text style={styles.label}>Rol:</Text>
-              <TextInput
-                style={[styles.textInput, (errors?.rol ? styles.textError : null)]}
-                placeholder=" Ingresa el rol"
-                value={user?.rol || ""}
-                onChangeText={(text) => {
-                  setUserProp("rol", text);
-                }}
-                textContentType="name"
-              />
-              {errors?.rol ? (
-                <Text style={styles.textError}>{errors.rol}</Text>
+              {errors?.deviceCategoryId ? (
+                <Text style={styles.textError}>{errors.deviceCategoryId}</Text>
               ) : null }
             </View>
 
@@ -153,7 +106,7 @@ const AddUserView: React.FC<AddUserViewProps> = ({
               
               <Pressable
                 style={[styles.button, styles.buttonSaving]}
-                onPress={handleSaveUser}
+                onPress={handleSaveDevice}
               >
                 <Text style={styles.textStyle}>Registrar</Text>
               </Pressable>
@@ -165,10 +118,10 @@ const AddUserView: React.FC<AddUserViewProps> = ({
   );
 };
 
-const AddUserScreen = (props: any) => (
-  <AddUserProvider>
-    <AddUserView {...props} />
-  </AddUserProvider>
+const AddDeviceScreen = (props: any) => (
+  <AddDeviceProvider>
+    <AddDeviceView {...props} />
+  </AddDeviceProvider>
 );
 
 const { width } = Dimensions.get("window"); // Obtiene el ancho de la pantalla
@@ -250,4 +203,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddUserScreen;
+export default AddDeviceScreen;
