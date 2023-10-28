@@ -1,17 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { AppBar } from '@react-native-material/core';
-import { DevicesProvider, useDevicesState } from '../providers/devicesProvider';
-import { Searchbar, IconButton} from 'react-native-paper';
+import { ActivityIndicator, AppBar } from '@react-native-material/core';
+import { Searchbar, IconButton } from 'react-native-paper';
 import DeviceCard from './components/deviceCard';
+import { DevicesProvider, useDevicesState } from '../providers/devicesProvider';
+import AddDeviceView from './components/addDevice';
 
 function DevicesScreenView() {
-  const { devices, getDevices } = useDevicesState();
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const showModal = () => {
+    setModalVisible(true);
+  };
+  
+  const { 
+    devices, 
+    loading,
+
+    //actions
+    getDevices 
+  } = useDevicesState();
+
   const [searchQuery, setSearchQuery] = useState('');
 
   const onChangeSearch = (query: string) => {
     setSearchQuery(query);
-    // Realiza la lógica de filtrado y actualización del estado de los dispositivos aquí
+    // Realiza la lógica de filtrado y actualización del estado de los usuarios aquí
   };
 
   useEffect(() => {
@@ -23,20 +37,25 @@ function DevicesScreenView() {
       return null;
     }
 
-    // Filtra dispositivos según la búsqueda
     const filteredDevices = devices.filter(
       (device) =>
         `${device.brand}`.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    return filteredDevices.map((device) => (
-      <DeviceCard key={device.id} device={device} />
-    ));
+    return filteredDevices.map((device) => <DeviceCard key={device.id} device={device} />);
   };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.horizontal]}>
+        <ActivityIndicator size={120} color='#00ff00'></ActivityIndicator>
+      </View>
+    )
+  }
 
   return (
     <View style={styles.container}>
-      <AppBar title="Dispositivos" color="#0559B7" tintColor="white" centerTitle={true} />
+      <AppBar title="Dispositivos registrados" color="#0559B7" tintColor="white" centerTitle={true} />
       <Searchbar
         placeholder="Buscar dispositivos"
         onChangeText={onChangeSearch}
@@ -47,16 +66,16 @@ function DevicesScreenView() {
       <ScrollView contentContainerStyle={styles.containerScrollView}>
         {renderCards()}
       </ScrollView>
+
+      {/* Botón de agregar */}
       <IconButton
         icon="plus"
-        onPress={() => {
-          // Acción al presionar el botón de agregar nuevo dispositivo
-          // Puedes abrir un modal, navegar a una nueva pantalla, etc.
-        }}
+        onPress={showModal}
         style={styles.addButton}
         iconColor="#ffffff"
         size={30}
       />
+      <AddDeviceView modalVisible={modalVisible} setModalVisible={setModalVisible} />
     </View>
   );
 }
@@ -78,18 +97,23 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     marginTop: 20,
-    backgroundColor: '#e0e0e0',
+    backgroundColor: '#e0e0e0', 
   },
   searchInput: {
-    color: '#000',
+    color: '#000', 
   },
   addButton: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 20, 
     right: 20,
-    backgroundColor: '#0559B7', 
+    backgroundColor: '#0559B7',
     borderRadius: 50,
-    elevation: 5, 
+    elevation: 5,
+  },
+  horizontal: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10,
   },
 });
 

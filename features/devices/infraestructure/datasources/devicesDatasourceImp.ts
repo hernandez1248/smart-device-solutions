@@ -1,13 +1,39 @@
 import DevicesDatasource from "../../domain/datasources/devicesDatasource";
 import Device from "../../domain/entities/device";
 import DevicesResult from "../../domain/entities/devicesResult";
+import backendConfig from "../../../../config/backend/config";
+import AddDevicesResult from "../../domain/entities/addDeviceResult";
 
 class DevicesDatasourceImp extends DevicesDatasource {
+        async addDevice(device: Device): Promise<AddDevicesResult> {
+            //console.log(device);
+            
+            return fetch(`${backendConfig.url}/api/device`, {
+            method: "POST",
+            body: JSON.stringify(device),
+            headers: {
+                "Content-Type": "application/json",
+            },
+            })
+
+            .then((response) => response.json())
+            .then((response) => {
+                //console.log(response);
+      
+                const result = new AddDevicesResult(response.message, response.device || null);
+                result.errors = response.errors || null;
+                result.error = response.error || false;
+                console.log(response);
+
+                return result;                    
+            });
+        }
+
         async getDevices(): Promise<DevicesResult> {
         //Mandar a cargar la lista de personajes desde la api
         //usando fetch
 
-        return fetch('http://192.168.1.68:3000/api/device')
+        return fetch(`${backendConfig.url}/api/device`)
         .then((response) => response.json())
         .then((response) => {
             
@@ -16,12 +42,11 @@ class DevicesDatasourceImp extends DevicesDatasource {
                 item.id,
                 item.brand,
                 item.model,
+                item.deviceCategoryId,
             )
             );
 
-            return new DevicesResult (
-                devices
-            )
+            return new DevicesResult (devices)
         });
     }
 
