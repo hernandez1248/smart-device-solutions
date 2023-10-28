@@ -7,6 +7,7 @@ import { AntDesign } from '@expo/vector-icons';
  import UserScreen from "../features/users/appication/screen/usersScreen";
  import ComponentScreen from "../features/components/application/screens/componentScreen";
 import DeviceScreen from "../features/devices/appication/screens/devicesScreen";
+import OrderScreen from "../features/orders/application/screens/ordersScreen";
 /*import DeviceScreen from "../features/devices/appication/screens/devicesScreen";
 import ComponentScreen from "../features/components/appication/screens/componentsScreen";
 import OrderScreen from "../features/orders/application/screens/ordersScreen"; */
@@ -50,11 +51,11 @@ function MyTabs() {
         component={UserScreen}
         options={{ headerShown: false, tabBarLabel: "Usuarios" }}
       />
-       {/* <Tab.Screen
+      <Tab.Screen
         name="Orders"
-        component={AddUserScreen}
+        component={OrderScreen}
         options={{ headerShown: false, tabBarLabel: "Agregar" }}
-    /> */}
+      />
       <Tab.Screen
         name="Devices"
         component={DeviceScreen}

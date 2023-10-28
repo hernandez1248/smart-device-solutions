@@ -1,33 +1,35 @@
-// define la entidad Device
+import Detalles from "./detalles";
 class Order {
-    id: number; 
+    id?: number;
     date: string;
     fullName: string;
     phone: string;
-    servicesId: number;
-    deviceId: number;
+    servicesId?: number;
+    deviceId?: number;
     color: string;
     observations: string;
-    fullPay: number;
-    advancePay: number;
-    remainingPay: number;
-    userId: number;
-    
+    fullPay?: number;
+    advancePay?: number;
+    remainingPay?: number;
+    userId?: number;
+    detalles: Detalles[];
+
     constructor(
-        id: number, 
         date: string,
         fullName: string,
         phone: string,
-        servicesId: number,
-        deviceId: number,
         color: string,
         observations: string,
-        fullPay: number,
-        advancePay: number,
-        remainingPay: number,
-        userId: number,
+        detalles: Detalles[] = [],
+        fullPay?: number,
+        advancePay?: number,
+        remainingPay?: number,
+        userId?: number,
+        id?: number,
+        servicesId?: number,
+        deviceId?: number
     ) {
-        this.id = id; 
+        this.id = id;
         this.date = date;
         this.fullName = fullName;
         this.phone = phone;
@@ -39,6 +41,8 @@ class Order {
         this.advancePay = advancePay;
         this.remainingPay = remainingPay;
         this.userId = userId;
+        this.detalles = detalles;
     }
 }
+
 export default Order;
