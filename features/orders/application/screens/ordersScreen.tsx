@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { AppBar } from '@react-native-material/core';
-import { Searchbar, Button, IconButton } from 'react-native-paper';
+import { Searchbar, Button, IconButton, ActivityIndicator } from 'react-native-paper';
 import OrderCard from './components/orderCard';
 import { OrdersProvider, useOrdersState } from '../providers/ordersProvider';
+import AddOrderScreen from './components/addOrder';
 
 function OrdersScreenView() {
-  const { orders, getOrders } = useOrdersState();
+  const [modalVisible, setModalVisible] = useState(false);
+  
+  const showModal = () => {
+    setModalVisible(true);
+  };
+  
+  const { orders, loading, getOrders } = useOrdersState();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState(''); // Estado para mantener el estado seleccionado de los botones
 
@@ -33,6 +40,14 @@ function OrdersScreenView() {
 
     return filteredOrders.map((order) => <OrderCard key={order.id} order={order} />);
   };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.horizontal]}>
+        <ActivityIndicator size={120} color='#00ff00'></ActivityIndicator>
+      </View>
+    )
+  }
 
   return (
     <View style={styles.container}>
@@ -77,14 +92,12 @@ function OrdersScreenView() {
       {/* Botón de agregar */}
       <IconButton
         icon="plus"
-        onPress={() => {
-          // Acción al presionar el botón de agregar nueva orden
-          // Puedes abrir un modal, navegar a una nueva pantalla, etc.
-        }}
+        onPress={showModal}
         style={styles.addButton}
         iconColor="#ffffff"
         size={30} 
       />
+      <AddOrderScreen modalVisible={modalVisible} setModalVisible={setModalVisible} />
     </View>
   );
 }
@@ -129,6 +142,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#0559B7', 
     borderRadius: 50, 
     elevation: 5, 
+  },
+  horizontal: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10,
   },
 });
 

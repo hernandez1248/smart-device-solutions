@@ -1,13 +1,36 @@
+import backendConfig from "../../../../config/backend/config";
 import OrdersDatasource from "../../domain/datasources/ordersDatasource";
+import AddOrdersResult from "../../domain/entities/addOrderResult";
 import Order from "../../domain/entities/order";
 import OrdersResult from "../../domain/entities/ordersResult";
 
 class OrdersDatasourceImp extends OrdersDatasource {
+        async addOrder(order: Order): Promise<AddOrdersResult> {
+        
+            return fetch(`${backendConfig.url}/api/orders`, {
+            method: "POST",
+            body: JSON.stringify(order),
+            headers: {
+                "Content-Type": "application/json",
+            },
+            })
+            .then((response) => response.json())
+            .then((response) => {
+            
+            const result = new AddOrdersResult(response.message, response.order || null);
+            result.errors = response.errors || null;
+            result.error = response.error || false;
+            console.log(response);
+            
+        
+            return result;
+            });
+        }
         async getOrders(): Promise<OrdersResult> {
         //Mandar a cargar la lista de personajes desde la api
         //usando fetch
 
-        return fetch('http://192.168.1.68:3000/api/orders')
+        return fetch(`${backendConfig.url}/api/orders`)
         .then((response) => response.json())
         .then((response) => {
             
@@ -28,9 +51,7 @@ class OrdersDatasourceImp extends OrdersDatasource {
             )
             );
 
-            return new OrdersResult (
-                orders
-            )
+            return new OrdersResult (orders)
         });
     }
 
