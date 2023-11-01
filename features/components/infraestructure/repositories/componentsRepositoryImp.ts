@@ -1,4 +1,6 @@
 import ComponentsDatasource from "../../domain/datasources/componentsDatasource";
+import AddComponentResult from "../../domain/entities/addComponentResult";
+import Component from "../../domain/entities/component";
 import ComponentsResult from "../../domain/entities/componentsResult";
 import ComponentsRepository from "../../domain/repositories/componentsRepository";
 
@@ -9,8 +11,11 @@ import ComponentsRepository from "../../domain/repositories/componentsRepository
         super();
         this.datasource = datasource;
     } 
+    addComponent(component: Component): Promise<AddComponentResult> {
+        return this.datasource.addComponent(component);
+    }
 
-        getComponents(): Promise<ComponentsResult> {
+    getComponents(): Promise<ComponentsResult> {
         //Invocar al datasourcer y pedirle la lista de Components
         return this.datasource.getComponents();
      }

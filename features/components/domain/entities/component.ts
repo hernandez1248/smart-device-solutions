@@ -1,17 +1,17 @@
 // define la entidad Component
 class Component {
-    id: number;
+    id?: number;
     name: string;
-    price: number;
-    stock: number;
-    deviceId: number;
+    price: string;
+    stock: string;
+    deviceId: string;
 
     constructor(
-        id: number,
         name: string,
-        price: number,
-        stock: number,
-        deviceId: number,
+        price: string,
+        stock: string,
+        deviceId: string,
+        id?: number,
     ) {
         this.id = id;
         this.name = name;

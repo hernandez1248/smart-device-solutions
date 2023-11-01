@@ -1,51 +1,3 @@
-// import { StyleSheet, Text, View, Image } from 'react-native';
-// import Component from "../../../domain/entities/component";
-
-// type CardProps ={
-//     component: Component
-// }
-
-// export default function ComponentCard(props : CardProps) {
-      
-//   console.log(props.component.name);
-  
-//     return (
-//         <View style={styles.tarjeta}>
-//             <Text style={styles.titulo} numberOfLines={2}>Nombre: {props.component.name}</Text>
-//             <Text>precio: ${props.component.price}</Text>
-//         </View>
-//     )
-// }
-
-// const styles = StyleSheet.create({
-//     tarjeta: {
-//         backgroundColor: '#c4d4e9',
-//         padding: 14,
-//         borderRadius: 8,
-//         shadowColor: '#000',
-//         shadowOffset: {
-//           width: 0,
-//           height: 1,
-//         },
-//         shadowOpacity: 0.25,
-//         shadowRadius: 3.84,
-//         elevation: 5,
-//         marginBottom: 10,
-        
-//     alignItems: 'center',
-//       },
-//   titulo: {
-//     //fontSize: 15,
-//     fontSize: 16,
-//     fontWeight: 'bold',
-//     marginBottom: 5,
-//     overflow: 'visible',
-//     textAlign: 'center',
-//     width: 120, // Ajusta el ancho de la imagen según la necesida
-//   },
-//   });  
-
-
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { IconButton } from 'react-native-paper';
@@ -68,7 +20,7 @@ export default function ComponentCard(props: CardProps) {
           ${props.component.price}
         </Text>
         <Text style={styles.column3}>
-          {Math.floor(props.component.stock)}
+          {parseInt(props.component.stock)} 
         </Text>
         <View style={styles.actions}>
           <IconButton

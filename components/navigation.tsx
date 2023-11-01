@@ -61,12 +61,11 @@ function MyTabs() {
         component={DeviceScreen}
         options={{ headerShown: false, tabBarLabel: "Dispositivos"}}
       />
-
      <Tab.Screen
         name="Components"
         component={ComponentScreen}
         options={{ headerShown: false, tabBarLabel: "Componentes" }}
-      />  
+      /> 
       
     </Tab.Navigator>
   );
