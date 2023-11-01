@@ -27,7 +27,11 @@ import ComponentsResult from "../../domain/entities/componentsResult";
  }
  
  //definir los tipos de acciones que podra ejecutar el context / providers
- type ComponentsActionType = {type: 'Set Loading', payload: boolean} | {type: 'Set Data', payload: ComponentsResult}
+ type ComponentsActionType = 
+    {type: 'Set Loading', payload: boolean}
+    | {type: 'Set Data', payload: ComponentsResult}
+    
+    ;
  
  //inicializar el state
  const initialState : ComponentsState = {
@@ -41,7 +45,10 @@ import ComponentsResult from "../../domain/entities/componentsResult";
          switch (action.type) {
              //manipular el estado con base a las acciones
              case 'Set Loading':
-                 return {...state, loading: action.payload}
+                 return {
+                    ...state, 
+                    loading: action.payload
+                }
              case 'Set Data':
                  return {
                      ...state,
