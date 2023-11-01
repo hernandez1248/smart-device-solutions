@@ -1,3 +1,4 @@
+import backendConfig from "../../../../config/backend/config";
 import ComponentsDatasource from "../../domain/datasources/componentsDatasource";
 import AddComponentResult from "../../domain/entities/addComponentResult";
 import Component from "../../domain/entities/component";

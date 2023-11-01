@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, AppBar } from '@react-native-material/core';
 import { Searchbar, IconButton } from 'react-native-paper';
-import UserCard from './components/userCard';
-import { UsersProvider, useUsersState } from '../provider/usersProvider';
-import AddUserView from './components/addUser';
+import DeviceCard from './components/deviceCard';
+import { DevicesProvider, useDevicesState } from '../providers/devicesProvider';
+import AddDeviceView from './components/addDevice';
 
-function UsersScreenView() {
+function DevicesScreenView() {
   const [modalVisible, setModalVisible] = useState(false);
 
   const showModal = () => {
@@ -14,12 +14,12 @@ function UsersScreenView() {
   };
   
   const { 
-    users, 
+    devices, 
     loading,
 
     //actions
-    getUsers 
-  } = useUsersState();
+    getDevices 
+  } = useDevicesState();
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -29,20 +29,20 @@ function UsersScreenView() {
   };
 
   useEffect(() => {
-    getUsers();
+    getDevices();
   }, []);
 
   const renderCards = () => {
-    if (users == null) {
+    if (devices == null) {
       return null;
     }
 
-    const filteredUsers = users.filter(
-      (user) =>
-        `${user.name} ${user.lastName}`.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredDevices = devices.filter(
+      (device) =>
+        `${device.brand}`.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    return filteredUsers.map((user) => <UserCard key={user.id} user={user} />);
+    return filteredDevices.map((device) => <DeviceCard key={device.id} device={device} />);
   };
 
   if (loading) {
@@ -55,9 +55,9 @@ function UsersScreenView() {
 
   return (
     <View style={styles.container}>
-      <AppBar title="Usuarios registrados" color="#0559B7" tintColor="white" centerTitle={true} />
+      <AppBar title="Dispositivos registrados" color="#0559B7" tintColor="white" centerTitle={true} />
       <Searchbar
-        placeholder="Buscar usuarios"
+        placeholder="Buscar dispositivos"
         onChangeText={onChangeSearch}
         value={searchQuery}
         style={styles.searchBar}
@@ -69,21 +69,21 @@ function UsersScreenView() {
 
       {/* Botón de agregar */}
       <IconButton
-        icon="account-plus"
+        icon="plus"
         onPress={showModal}
         style={styles.addButton}
         iconColor="#ffffff"
         size={30}
       />
-      <AddUserView modalVisible={modalVisible} setModalVisible={setModalVisible} />
+      <AddDeviceView modalVisible={modalVisible} setModalVisible={setModalVisible} />
     </View>
   );
 }
 
-const UserScreen = (props: any) => (
-  <UsersProvider>
-    <UsersScreenView {...props} />
-  </UsersProvider>
+const DeviceScreen = (props: any) => (
+  <DevicesProvider>
+    <DevicesScreenView {...props} />
+  </DevicesProvider>
 );
 
 const styles = StyleSheet.create({
@@ -117,4 +117,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserScreen;
+export default DeviceScreen;

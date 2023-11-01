@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Card, Text } from "react-native-paper";
 import { View, Image, StyleSheet } from "react-native";
 import { useNavigation } from '@react-navigation/native';
-// import UserScreen from "../../../users/application/screen/userScreen";
+import UserScreen from "../../../users/appication/screen/usersScreen";
 
 type Props = {
   navigation: any,

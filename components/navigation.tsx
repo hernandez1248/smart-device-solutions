@@ -4,10 +4,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from '@expo/vector-icons';
 
 // Importa tus pantallas
-import UserScreen from "../features/users/application/screens/userScreen";
-import OrderScreen from "../features/orders/application/screens/orderScreen";
-import DeviceScreen from "../features/devices/application/screens/devicesScreen";
-import ComponentScreen from "../features/components/application/screens/componentScreen";
+ import UserScreen from "../features/users/appication/screen/usersScreen";
+ import ComponentScreen from "../features/components/application/screens/componentScreen";
+import DeviceScreen from "../features/devices/appication/screens/devicesScreen";
+import OrderScreen from "../features/orders/application/screens/ordersScreen";
+/*import DeviceScreen from "../features/devices/appication/screens/devicesScreen";
+import ComponentScreen from "../features/components/appication/screens/componentsScreen";
+import OrderScreen from "../features/orders/application/screens/ordersScreen"; */
 
 const Tab = createBottomTabNavigator();
 
@@ -43,17 +46,16 @@ function MyTabs() {
         tabBarInactiveTintColor: "gray",
       })}
     >
-      <Tab.Screen
+       <Tab.Screen
         name="Users"
         component={UserScreen}
         options={{ headerShown: false, tabBarLabel: "Usuarios" }}
-      /> 
-
+      />
       <Tab.Screen
         name="Orders"
         component={OrderScreen}
-        options={{ headerShown: false, tabBarLabel: "Ordenes" }}
-      /> 
+        options={{ headerShown: false, tabBarLabel: "Agregar" }}
+      />
       <Tab.Screen
         name="Devices"
         component={DeviceScreen}
