@@ -40,8 +40,8 @@ class UsersDatasourceImp extends UsersDatasource {
               item.phone,
               item.email,
               item.rol,
-              item.password,
               item.id,
+              item.password,
             )
         );
 

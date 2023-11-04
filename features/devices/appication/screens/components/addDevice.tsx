@@ -80,23 +80,31 @@ const AddDeviceView: React.FC<AddDeviceViewProps> = ({modalVisible,setModalVisib
                 <Text style={styles.textError}>{errors.model}</Text>
               ) : null }
             </View>
+
+
             <View>
-              <Text style={styles.label}>Categoria:</Text>
-              <TextInput
-                style={[styles.textInput, (errors?.deviceCategoryId ? styles.textError : null)]}
-                placeholder=" Ingresa la categoria a la que pertenece"
-                value={device?.deviceCategoryId?.toString()  || undefined}
-                onChangeText={(text) => {
-                  setDeviceProp("deviceCategoryId", text);
+              <Text style={styles.label}>Categoria a la que pertenece:</Text>
+              <RNPickerSelect
+                onValueChange={(value) => setDeviceProp("deviceCategoryId", value)}
+                items={[
+                  { label: 'Celular', value: '1' },
+                  { label: 'Tableta', value: '2' },      
+                  { label: 'PC', value: '3' },
+                  { label: 'Laptop', value: '4' },
+
+                ]}
+                style={{
+                  inputIOS: styles.textInput,
+                  inputAndroid: styles.textInput,
                 }}
-                textContentType="creditCardNumber"
+                value={device?.deviceCategoryId}
+                placeholder={{
+                  label: 'Elige una categoria',
+                  value: null,
+                }}
               />
-              {errors?.deviceCategoryId ? (
-                <Text style={styles.textError}>{errors.deviceCategoryId}</Text>
-              ) : null }
+              {errors?.deviceCategoryId ? <Text style={styles.textError}>{errors.deviceCategoryId}</Text> : null}
             </View>
-
-
 
             
 
