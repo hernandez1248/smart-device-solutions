@@ -1,15 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Modal, Text, TextInput, StyleSheet, Pressable, Dimensions, Alert } from "react-native";
 import { AddComponentProvider, useAddComponentState } from "../../providers/addComponentProvider";
+import { EditComponentProvider, useEditComponentState } from "../../providers/editComponentProvider";
+import Component from "../../../domain/entities/component";
 
-interface AddComponentViewProps {
+
+interface EditComponentViewProps {
+  componentEdit: Component,
+  onSaved: Function,
   modalVisible: boolean;
-  setModalVisible: (visible: boolean) => void;
+  onCancelEdit: Function;
 }
 
-const AddComponentView: React.FC<AddComponentViewProps> = ({
+const EditComponentView: React.FC<EditComponentViewProps> = ({
+  componentEdit,
+  onSaved,
   modalVisible,
-  setModalVisible,
+  onCancelEdit,
 }) => {
   const {
     message,
@@ -21,17 +28,25 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
 
     
     setComponentProp,
-    saveComponent
-  } = useAddComponentState();
+    saveComponent,
+    setComponent,
+  } = useEditComponentState();
+
+  //al recibir el usuario a editar, pasarlo al proveedor de estado
+  useEffect(() => {
+    setComponent(componentEdit)
+  }, [componentEdit]);
+
+  
 
   const handleSaveComponent = () => {
     saveComponent(() => { });
-      setModalVisible(false); // Cierra el modal primero
+      onCancelEdit(false); // Cierra el modal primero
       
       
       // Retrasa la aparición de la alerta
       setTimeout(() => {
-        Alert.alert('Componente Registrado', 'El Componente se ha registrado correctamente', [
+        Alert.alert('Componente Actualizado', 'El Componente se ha actualizado correctamente', [
           { text: 'OK', onPress: () => {} },
         ]);
       }, 500); // Puedes ajustar el tiempo de retardo según tus necesidades
@@ -45,7 +60,7 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
-          setModalVisible(false);
+          onCancelEdit(null);
         }}
       >
         <View style={styles.centeredView}>
@@ -118,14 +133,18 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
       
               <Pressable
                 style={[styles.button, styles.buttonClose]}
-                onPress={() => setModalVisible(false)}
+                onPress={() => {
+                  onCancelEdit(null)
+                }}
               >
                 <Text style={styles.textStyle}>Cancelar</Text>
               </Pressable>
               
               <Pressable
                 style={[styles.button, styles.buttonSaving]}
-                onPress={handleSaveComponent}
+                onPress={() => {
+                  saveComponent(onSaved);
+                }}
               >
                 <Text style={styles.textStyle}>Registrar</Text>
               </Pressable>
@@ -137,10 +156,10 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
   );
 };
 
-const AddComponent = (props: any) => (
-  <AddComponentProvider>
-    <AddComponentView {...props} />
-  </AddComponentProvider>
+const EditComponent = (props: EditComponentViewProps) => (
+  <EditComponentProvider>
+    <EditComponentView {...props} />
+  </EditComponentProvider>
 );
 
 const { width } = Dimensions.get("window"); // Obtiene el ancho de la pantalla
@@ -223,4 +242,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddComponent;
+export default EditComponent;

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { AppBar } from '@react-native-material/core';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, AppBar } from '@react-native-material/core';
 import { Searchbar, IconButton } from 'react-native-paper';
 import ComponentCard from './components/componentCard';
 import { ComponentsProvider, useComponentsState } from '../providers/componentsProvider';
+import AddComponent from './components/addComponent';
+import EditComponent from './components/editComponent';
 
 function ComponentsScreenView() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -12,7 +14,16 @@ function ComponentsScreenView() {
     setModalVisible(true);
   };
 
-  const { components, getComponents } = useComponentsState();
+  const {
+    loading,
+    components,
+    componentSelected,
+
+    getComponents,
+    setComponentSelected,
+    onUpdateComponent,
+  } = useComponentsState();
+
   const [searchQuery, setSearchQuery] = useState('');
 
   const onChangeSearch = (query: string) => {
@@ -38,10 +49,19 @@ function ComponentsScreenView() {
     return filteredComponents.map((component) => (
       <ComponentCard 
         key={component.id} 
-        component={component} 
-      />
-    ));
+        component={component}
+        onEdit={setComponentSelected}
+      />)
+    );
   };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.horizontal]}>
+        <ActivityIndicator size={120} color='#00ff00'></ActivityIndicator>
+      </View>
+    )
+  }
 
   return (
     <View style={styles.container}>
@@ -53,6 +73,22 @@ function ComponentsScreenView() {
         style={styles.searchBar}
         inputStyle={styles.searchInput}
       />
+      <View >
+        {/* <View style={styles.horizontalLine} /> */}
+      <View style={styles.row}>
+        <Text style={[styles.column, styles.boldText]}>
+          Componente 
+        </Text>
+        <Text style={[styles.column2, styles.boldText]}>
+          Precio
+        </Text>
+        <Text style={[styles.column3, styles.boldText]}>
+          Cantidad
+        </Text>
+      </View>
+      {/* <View style={styles.horizontalLine}/> */}
+      </View>
+      
       <ScrollView contentContainerStyle={styles.containerScrollView}>
         {renderCards()}
       </ScrollView>
@@ -63,8 +99,17 @@ function ComponentsScreenView() {
         iconColor="#ffffff" 
         size={30}
       />
-      <AddComponentScreen modalVisible={modalVisible} setModalVisible={setModalVisible} />
-    
+      <AddComponent modalVisible={modalVisible} setModalVisible={setModalVisible} />
+      
+      {!!componentSelected ? (
+        <EditComponent 
+          componentEdit={componentSelected}
+          modalVisible={!!componentSelected}
+          onSaved={onUpdateComponent}
+          onCancelEdit={setComponentSelected}
+        />
+      ) : null }
+
     </View>
   );
 }
@@ -91,6 +136,36 @@ const styles = StyleSheet.create({
   searchInput: {
     color: '#000', 
   },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+    height: 49,
+    backgroundColor: '#e6e6fa',
+    // color: '#fff'
+  },
+  column: {
+    flex: 1,
+    marginLeft: 22,
+    fontSize: 14,
+    marginTop: 12
+  },
+  column2: {
+    flex: 1,
+    fontSize: 14,
+    marginLeft: 47, // Ajusta el espacio entre columnas aquí
+    marginTop: 12
+  },
+  column3: {
+    flex: 1,
+    fontSize: 14,
+    marginRight: 57, // Ajusta el espacio entre columnas aquí
+    marginTop: 12
+  },
+  boldText: {
+    fontWeight: 'bold',
+    color: '#696969',
+  },
   addButton: {
     position: 'absolute',
     bottom: 20,
@@ -99,6 +174,18 @@ const styles = StyleSheet.create({
     borderRadius: 50, 
     elevation: 5, 
   },
+  horizontal: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10,
+  },
+  horizontalLine: {
+    borderBottomColor: '#b0c4de',
+    borderBottomWidth: 1,
+    marginVertical: 8,
+    marginTop: 20,
+  },
+
 });
 
 export default ComponentScreen;
