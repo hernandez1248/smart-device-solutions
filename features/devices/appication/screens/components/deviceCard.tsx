@@ -3,30 +3,37 @@ import Device from "../../../domain/entities/device";
 import { IconButton } from 'react-native-paper';
 
 type CardProps ={
-    device: Device
+    device: Device,
+    onEdit?: Function,
 }
 
-export default function DeviceCard(props : CardProps) {
+const DeviceCard: React.FC<CardProps>= ({device, onEdit}) => {
       
-  console.log(props.device.model);
+  console.log(device.model);
+
+  const handleEdit = () => {
+    if(onEdit){      
+       onEdit(device);
+    }
+  }
   
     return (
       <View>
       <View style={styles.row}>
         <Text style={styles.column}>
-          {props.device.brand}
+          {device.brand}
         </Text>
         <Text style={[styles.column2, styles.boldText]}>
-          {props.device.model}
+          {device.model}
         </Text>
         <View style={styles.actions}>
           <IconButton
             icon="pencil"
             iconColor='blue'
             size={20}
-            onPress={() => {
-              // Acción al presionar el botón de editar
-            }}
+            onPress={
+              handleEdit
+            }
           />
           <IconButton
             icon="delete"
@@ -43,6 +50,9 @@ export default function DeviceCard(props : CardProps) {
 
 );
 }
+
+
+export default DeviceCard;
 
 const styles = StyleSheet.create({
 row: {
