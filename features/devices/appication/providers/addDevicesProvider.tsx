@@ -146,7 +146,7 @@ const AddDeviceProvider:FC<Props> = ({ children }) => {
       });
       
       if (onSaved) {
-        onSaved(false);
+      return onSaved(false);
 
       }
       console.log(result);

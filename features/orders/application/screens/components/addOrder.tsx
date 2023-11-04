@@ -72,9 +72,8 @@ const AddOrderView: React.FC<AddOrderViewProps> = ({
     //console.log(orderWithDetails);
 
     saveOrder(() => {
-    });
 
-
+      
     setModalVisible(false); // Cierra el modal primero
 
     // Retrasa la aparición de la alerta
@@ -83,6 +82,11 @@ const AddOrderView: React.FC<AddOrderViewProps> = ({
         { text: 'OK', onPress: () => { } },
       ]);
     }, 500); // Puedes ajustar el tiempo de retardo según tus necesidades
+
+    
+    });
+
+
   };
 
 

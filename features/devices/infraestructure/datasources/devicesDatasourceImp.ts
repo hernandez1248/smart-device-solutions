@@ -5,12 +5,12 @@ import backendConfig from "../../../../config/backend/config";
 import AddDevicesResult from "../../domain/entities/addDeviceResult";
 
 class DevicesDatasourceImp extends DevicesDatasource {
-        async addDevice(device: Device): Promise<AddDevicesResult> {
+        async addDevice(devices: Device): Promise<AddDevicesResult> {
             //console.log(device);
             
             return fetch(`${backendConfig.url}/api/device`, {
             method: "POST",
-            body: JSON.stringify(device),
+            body: JSON.stringify(devices),
             headers: {
                 "Content-Type": "application/json",
             },
@@ -20,7 +20,7 @@ class DevicesDatasourceImp extends DevicesDatasource {
             .then((response) => {
                 //console.log(response);
       
-                const result = new AddDevicesResult(response.message, response.device || null);
+                const result = new AddDevicesResult(response.message, response.devices || null);
                 result.errors = response.errors || null;
                 result.error = response.error || false;
                 console.log(response);
@@ -39,10 +39,10 @@ class DevicesDatasourceImp extends DevicesDatasource {
             
 
             const devices = response.map((item : any) => new Device(
-                item.id,
                 item.brand,
                 item.model,
                 item.deviceCategoryId,
+                item.id,
             )
             );
 
