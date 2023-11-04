@@ -5,6 +5,7 @@ import { Searchbar, IconButton } from 'react-native-paper';
 import DeviceCard from './components/deviceCard';
 import { DevicesProvider, useDevicesState } from '../providers/devicesProvider';
 import AddDeviceView from './components/addDevice';
+import DeviceEditScreen from './components/deviceEditModal';
 
 function DevicesScreenView() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -16,9 +17,12 @@ function DevicesScreenView() {
   const { 
     devices, 
     loading,
+    deviceSelected,
 
     //actions
-    getDevices 
+    getDevices,
+    setDeviceSelected,
+    onUpdatedDevice
   } = useDevicesState();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -42,7 +46,7 @@ function DevicesScreenView() {
         `${device.brand}`.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    return filteredDevices.map((device) => <DeviceCard key={device.id} device={device} />);
+    return filteredDevices.map((device) => <DeviceCard key={device.id} device={device} onEdit={setDeviceSelected}/>);
   };
 
   if (loading) {
@@ -76,7 +80,11 @@ function DevicesScreenView() {
         size={30}
       />
       <AddDeviceView modalVisible={modalVisible} setModalVisible={setModalVisible} />
-    </View>
+      {!!deviceSelected ? (
+      <DeviceEditScreen deviceEdit={deviceSelected} modalVisible={!!deviceSelected} onSaved={onUpdatedDevice} onCancelEdit={setDeviceSelected} />
+      ) : null}
+
+       </View>
   );
 }
 

@@ -9,7 +9,7 @@ class DevicesDatasourceImp extends DevicesDatasource {
             //console.log(device);
             
             return fetch(`${backendConfig.url}/api/device`, {
-            method: "POST",
+            method: !devices.id ? "POST": 'PATCH',
             body: JSON.stringify(devices),
             headers: {
                 "Content-Type": "application/json",
