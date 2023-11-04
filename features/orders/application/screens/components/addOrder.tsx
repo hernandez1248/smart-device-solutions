@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Modal, Text, TextInput, StyleSheet, Pressable, Dimensions, Alert, ScrollView } from "react-native";
 import { AddOrderProvider, useAddOrderState } from "../../providers/addOrdersProvider";
+import RNPickerSelect from 'react-native-picker-select';
+import { DevicesProvider, useDevicesState } from "../../../../devices/appication/providers/devicesProvider";
+import { UsersProvider, useUsersState } from "../../../../users/appication/provider/usersProvider";
 
 interface AddOrderViewProps {
   modalVisible: boolean;
@@ -26,6 +29,10 @@ const AddOrderView: React.FC<AddOrderViewProps> = ({
     setOrderProp,
     saveOrder,
   } = useAddOrderState();
+
+
+  const { devices, getDevices } = useDevicesState();
+  const { users, getUsers } = useUsersState();
 
   const [detalles, setOrderDetails] = useState<OrderDetail[]>([]);
 
@@ -60,6 +67,10 @@ const AddOrderView: React.FC<AddOrderViewProps> = ({
     setOrderProp("detalles", updatedOrder.detalles);
   };
 
+  useEffect(() => {
+    getDevices();
+    getUsers();
+  }, []);
 
 
   const handleSaveOrder = () => {
@@ -73,17 +84,17 @@ const AddOrderView: React.FC<AddOrderViewProps> = ({
 
     saveOrder(() => {
 
-      
-    setModalVisible(false); // Cierra el modal primero
 
-    // Retrasa la aparición de la alerta
-    setTimeout(() => {
-      Alert.alert('Orden Registrada', 'La orden se ha registrado correctamente.', [
-        { text: 'OK', onPress: () => { } },
-      ]);
-    }, 500); // Puedes ajustar el tiempo de retardo según tus necesidades
+      setModalVisible(false); // Cierra el modal primero
 
-    
+      // Retrasa la aparición de la alerta
+      setTimeout(() => {
+        Alert.alert('Orden Registrada', 'La orden se ha registrado correctamente.', [
+          { text: 'OK', onPress: () => { } },
+        ]);
+      }, 500); // Puedes ajustar el tiempo de retardo según tus necesidades
+
+
     });
 
 
@@ -134,36 +145,64 @@ const AddOrderView: React.FC<AddOrderViewProps> = ({
                   <Text style={styles.textError}>{errors.phone}</Text>
                 ) : null}
               </View>
+
+
+
+
+
               <View>
                 <Text style={styles.label}>Tipo de servicio:</Text>
-                <TextInput
-                  style={[styles.textInput, (errors?.servicesId ? styles.textError : null)]}
-                  placeholder="Ingresa el tipo de servicio"
-                  value={order?.servicesId?.toString() || undefined}
-                  onChangeText={(text) => {
-                    setOrderProp("servicesId", text);
+                <RNPickerSelect
+                  onValueChange={(value) => setOrderProp("servicesId", value)}
+                  items={[
+                    { label: 'Mantenimiento', value: '1' },
+                    { label: 'Reparacion', value: '2' },
+
+                  ]}
+                  style={{
+                    inputIOS: styles.textInput,
+                    inputAndroid: styles.textInput,
                   }}
-                  textContentType="creditCardNumber"
-                ></TextInput>
-                {errors?.servicesId ? (
-                  <Text style={styles.textError}>{errors.servicesId}</Text>
-                ) : null}
+                  value={order?.servicesId}
+                  placeholder={{
+                    label: 'Ingresa el tipo de servicio',
+                    value: null,
+                  }}
+                />
+                {errors?.servicesId ? <Text style={styles.textError}>{errors.servicesId}</Text> : null}
               </View>
+
+
+
               <View>
                 <Text style={styles.label}>Dispositivo que se le dara servicio:</Text>
-                <TextInput
-                  style={[styles.textInput, (errors?.deviceId ? styles.textError : null)]}
-                  placeholder="Selecciona el dispositivo"
-                  value={order?.deviceId?.toString() || undefined}
-                  onChangeText={(text) => {
-                    setOrderProp("deviceId", text);
+                <RNPickerSelect
+                  onValueChange={(value) => setOrderProp("deviceId", value)}
+                  items={[
+                    ...(devices && devices.length > 0
+                      ? devices.map((device) => ({
+                        label: 'Marca: ' + device.brand + ' Modelo: ' + device.model,
+                        value: device.id,
+                      }))
+                      : []),
+                  ]}
+                  style={{
+                    inputIOS: styles.textInput,
+                    inputAndroid: styles.textInput,
                   }}
-                  textContentType="creditCardNumber"
+                  value={order?.deviceId}
+                  placeholder={{
+                    label: 'Elige un dispositivo',
+                    value: null,
+                  }}
                 />
-                {errors?.deviceId ? (
-                  <Text style={styles.textError}>{errors.deviceId}</Text>
-                ) : null}
+                {errors?.deviceId ? <Text style={styles.textError}>{errors.deviceId}</Text> : null}
               </View>
+
+
+
+
+
               <View>
                 <Text style={styles.label}>Color:</Text>
                 <TextInput
@@ -195,21 +234,42 @@ const AddOrderView: React.FC<AddOrderViewProps> = ({
                 ) : null}
               </View>
 
+
+
+
+
+
+
               <View>
                 <Text style={styles.label}>Usuario encargado de generar la orden:</Text>
-                <TextInput
-                  style={[styles.textInput, (errors?.userId ? styles.textError : null)]}
-                  placeholder="Ingresa el usuario encargado"
-                  value={order?.userId?.toString() || undefined}
-                  onChangeText={(text) => {
-                    setOrderProp("userId", text);
+                <RNPickerSelect
+                  onValueChange={(value) => setOrderProp("userId", value)}
+                  items={[
+                    ...(users && users.length > 0
+                      ? users.map((user) => ({
+                        label: user.name + ' ' + user.lastName,
+                        value: user.id,
+                      }))
+                      : []),
+                  ]}
+                  style={{
+                    inputIOS: styles.textInput,
+                    inputAndroid: styles.textInput,
                   }}
-                  textContentType="name"
+                  value={order?.userId}
+                  placeholder={{
+                    label: 'Ingresa el usuario encargado',
+                    value: null,
+                  }}
                 />
-                {errors?.userId ? (
-                  <Text style={styles.textError}>{errors.userId}</Text>
-                ) : null}
+                {errors?.userId ? <Text style={styles.textError}>{errors.userId}</Text> : null}
               </View>
+
+
+
+
+
+
 
               <View>
 
@@ -225,7 +285,7 @@ const AddOrderView: React.FC<AddOrderViewProps> = ({
                 {detalles.map((detalle, index) => (
                   <View key={index} style={{ marginTop: 10, marginBottom: 10 }}>
                     {/*<Text style={styles.label}>Componente:</Text>*/}
-                    <Text style={styles.label}>Componente: {index+1}</Text>
+                    <Text style={styles.label}>Componente: {index + 1}</Text>
                     <TextInput
                       style={styles.textInput}
                       placeholder="Ingresa el nombre del componente"
@@ -292,7 +352,12 @@ const AddOrderView: React.FC<AddOrderViewProps> = ({
 
 const AddOrderScreen = (props: any) => (
   <AddOrderProvider>
-    <AddOrderView {...props} />
+    <UsersProvider>
+    <DevicesProvider>
+      <AddOrderView {...props} />
+    </DevicesProvider>
+
+    </UsersProvider>
   </AddOrderProvider>
 );
 
