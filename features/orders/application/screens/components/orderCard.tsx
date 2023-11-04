@@ -2,16 +2,16 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import Order from "../../../domain/entities/order";
 import { IconButton } from 'react-native-paper';
 
-type CardProps ={
-    order: Order
+type CardProps = {
+  order: Order
 }
 
-export default function OrderCard(props : CardProps) {
-      
+export default function OrderCard(props: CardProps) {
+
   console.log(props.order.id);
-  
-    return (
-      <View>
+
+  return (
+    <View>
       <View style={styles.row}>
         <Text style={styles.column}>
           {props.order.fullName}
@@ -20,10 +20,10 @@ export default function OrderCard(props : CardProps) {
           Celular
         </Text>
         <Text style={[styles.column3, styles.boldText]}>
-          Reparación
+          {props.order.servicesId === 1 ? "Mantenimiento" : props.order.servicesId === 2 ? "Reparación" : ""}
         </Text>
         <View style={styles.actions}>
-        <IconButton
+          <IconButton
             icon="eye"
             iconColor='green'
             size={20}
@@ -51,7 +51,7 @@ export default function OrderCard(props : CardProps) {
       </View>
       <View style={styles.horizontalLine} />
     </View>
-    )
+  )
 }
 
 const styles = StyleSheet.create({
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   },
   column: {
     flex: 1,
-    fontSize: 14, 
+    fontSize: 14,
     marginTop: 12,
     marginLeft: -10
   },
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   column3: {
     flex: 1,
     fontSize: 14,
-    marginRight: -10, 
+    marginRight: -10,
     marginTop: 12
   },
   actions: {
@@ -93,4 +93,4 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     marginVertical: 10,
   },
-  });  
+});  

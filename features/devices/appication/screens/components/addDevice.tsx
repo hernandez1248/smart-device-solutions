@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { View, Modal, Text, TextInput, StyleSheet, Pressable, Dimensions, Alert } from "react-native";
+import RNPickerSelect from 'react-native-picker-select';
 import { AddDeviceProvider, useAddDeviceState } from "../../providers/addDevicesProvider";
 
 interface AddDeviceViewProps {
@@ -21,7 +22,7 @@ const AddDeviceView: React.FC<AddDeviceViewProps> = ({modalVisible,setModalVisib
   } = useAddDeviceState();
 
   const handleSaveDevice = () => {
-    saveDevice(() => { });
+    saveDevice(() => {
       setModalVisible(false); // Cierra el modal primero
       
       
@@ -31,7 +32,7 @@ const AddDeviceView: React.FC<AddDeviceViewProps> = ({modalVisible,setModalVisib
           { text: 'OK', onPress: () => {} },
         ]);
       }, 500); // Puedes ajustar el tiempo de retardo según tus necesidades
-   
+    });
   };
 
   return (
@@ -94,6 +95,10 @@ const AddDeviceView: React.FC<AddDeviceViewProps> = ({modalVisible,setModalVisib
                 <Text style={styles.textError}>{errors.deviceCategoryId}</Text>
               ) : null }
             </View>
+
+
+
+            
 
             <View style={styles.buttonsContainer}>
       

@@ -4,6 +4,8 @@ import { AppBar } from '@react-native-material/core';
 import { Searchbar, IconButton } from 'react-native-paper';
 import ComponentCard from './components/componentCard';
 import { ComponentsProvider, useComponentsState } from '../providers/componentsProvider';
+import AddComponent from './components/addComponent';
+import { useDevicesState } from '../../../devices/appication/providers/devicesProvider';
 
 function ComponentsScreenView() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -63,7 +65,7 @@ function ComponentsScreenView() {
         iconColor="#ffffff" 
         size={30}
       />
-      <AddComponentScreen modalVisible={modalVisible} setModalVisible={setModalVisible} />
+      <AddComponent modalVisible={modalVisible} setModalVisible={setModalVisible} />
     
     </View>
   );
