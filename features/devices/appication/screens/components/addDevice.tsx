@@ -40,7 +40,7 @@ const AddDeviceView: React.FC<AddDeviceViewProps> = ({ modalVisible, onSaved, se
         ]);
       }, 500); // Puedes ajustar el tiempo de retardo según tus necesidades
 
-      onSaved(device)
+      onSaved()
     })
 
 

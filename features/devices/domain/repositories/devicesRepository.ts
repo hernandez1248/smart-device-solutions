@@ -5,7 +5,8 @@ import AddDevicesResult from "../entities/addDeviceResult";
 
 abstract class DevicesRepository {
     abstract getDevices(): Promise<DevicesResult>;
-    abstract addDevice(device: Device): Promise<AddDevicesResult> 
+    abstract addDevice(device: Device): Promise<AddDevicesResult>;
+    abstract deleteDevice(device: Device): Promise<AddDevicesResult>;
 }
 
 export default DevicesRepository;
