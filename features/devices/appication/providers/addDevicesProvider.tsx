@@ -3,6 +3,7 @@ import Device from "../../domain/entities/device";
 import DevicesRepositoryImp from "../../infraestructure/repositories/devicesRepositoryImp";
 import DevicesDatasourceImp from "../../infraestructure/datasources/devicesDatasourceImp";
 
+
 //definir la estructura que tendra mi context
 interface ContextDefinition {
   //definición del estado
@@ -144,12 +145,14 @@ const AddDeviceProvider:FC<Props> = ({ children }) => {
           message: result.message,
         }
       });
-      
+      /*
       if (onSaved) {
       return onSaved(false);
 
       }
-      console.log(result);
+      console.log(result);*/
+      
+      onSaved(state.device);
 
 
       return;

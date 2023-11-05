@@ -22,7 +22,8 @@ function DevicesScreenView() {
     //actions
     getDevices,
     setDeviceSelected,
-    onUpdatedDevice
+    onUpdatedDevice,
+    onSavedDevice
   } = useDevicesState();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -79,7 +80,7 @@ function DevicesScreenView() {
         iconColor="#ffffff"
         size={30}
       />
-      <AddDeviceView modalVisible={modalVisible} setModalVisible={setModalVisible} />
+      <AddDeviceView modalVisible={modalVisible} setModalVisible={setModalVisible} onSaved = {onSavedDevice} />
       {!!deviceSelected ? (
       <DeviceEditScreen deviceEdit={deviceSelected} modalVisible={!!deviceSelected} onSaved={onUpdatedDevice} onCancelEdit={setDeviceSelected} />
       ) : null}

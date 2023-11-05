@@ -14,6 +14,7 @@ interface ContextDefinition {
     getDevices: () => void;
     setDeviceSelected: (device: Device | null) => void;
     onUpdatedDevice: (device: Device) => void;
+    onSavedDevice: (newDevice: Device) => void;
 }
 
 //crear el objeto context de react
@@ -98,9 +99,9 @@ const DevicesProvider: FC<Props> = ({ children }) => {
             payload: apiResult,
         });
     };
-    function setDeviceSelected (device: Device | null){
+    function setDeviceSelected(device: Device | null) {
         //console.log(device);
-        
+
         dispatch({
             type: 'Set Device Selected',
             payload: device,
@@ -111,24 +112,45 @@ const DevicesProvider: FC<Props> = ({ children }) => {
     *Actualiza el registro en la lista de devices y cierra el modal de editar
     * @param device Dispositivo actualizado4 
     */
-    function onUpdatedDevice(device:Device){
+    function onUpdatedDevice(device: Device) {
         //buscar el registro en devices,y remplazarlo
         //actualizar el estado users
+
         const devicesClone = [...state.devices];
         const index = devicesClone.findIndex((item) => item.id == device.id);
         devicesClone.splice(index, 1, device);
+
+
         dispatch({
             type: 'Set Data',
             payload: {
                 devices: devicesClone,
             }
         });
-
-
-
         //cierra el modal
         setDeviceSelected(null)
     }
+
+    function onSavedDevice(newDevice: Device) {
+
+        // Crear una copia de la lista actual de dispositivos
+        const devicesAddClone = [...state.devices];
+
+        // Agregar el nuevo dispositivo a la lista
+        devicesAddClone.push(newDevice);
+
+        dispatch({
+            type: 'Set Data',
+            payload: {
+                devices: devicesAddClone,
+            }
+        });
+
+        // Cerrar el modal
+        //setModalVisible(false);
+    }
+
+
 
     //retornar la estructura del provider
     return (
@@ -136,7 +158,8 @@ const DevicesProvider: FC<Props> = ({ children }) => {
             ...state,
             getDevices,
             setDeviceSelected,
-            onUpdatedDevice
+            onUpdatedDevice,
+            onSavedDevice
         }}>
             {children}
         </DevicesContext.Provider>

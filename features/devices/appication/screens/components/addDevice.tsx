@@ -5,10 +5,11 @@ import { AddDeviceProvider, useAddDeviceState } from "../../providers/addDevices
 
 interface AddDeviceViewProps {
   modalVisible: boolean;
+  onSaved: Function;
   setModalVisible: (visible: boolean) => void;
 }
 
-const AddDeviceView: React.FC<AddDeviceViewProps> = ({modalVisible,setModalVisible}) => {
+const AddDeviceView: React.FC<AddDeviceViewProps> = ({ modalVisible, onSaved, setModalVisible }) => {
   const {
     message,
     loading,
@@ -21,19 +22,35 @@ const AddDeviceView: React.FC<AddDeviceViewProps> = ({modalVisible,setModalVisib
     saveDevice,
   } = useAddDeviceState();
 
-  const handleSaveDevice = () => {
+  
+
+
+
+
+  const handleSaveDevice = async () => {
+
     saveDevice(() => {
       setModalVisible(false); // Cierra el modal primero
-      
-      
+
+
       // Retrasa la aparición de la alerta
       setTimeout(() => {
-        Alert.alert('Dispositivo Registrado', 'El dispositivo se ha registrado correctamente', [
-          { text: 'OK', onPress: () => {} },
+        Alert.alert('Componente Registrado', 'El Componente se ha registrado correctamente', [
+          { text: 'OK', onPress: () => { } },
         ]);
       }, 500); // Puedes ajustar el tiempo de retardo según tus necesidades
-    });
+
+      onSaved(device)
+    })
+
+
   };
+  
+
+
+
+
+
 
   return (
     <View style={styles.centeredView}>
@@ -61,9 +78,9 @@ const AddDeviceView: React.FC<AddDeviceViewProps> = ({modalVisible,setModalVisib
                 }}
                 textContentType="name"
               ></TextInput>
-                {errors?.brand ? (
+              {errors?.brand ? (
                 <Text style={styles.textError}>{errors.brand}</Text>
-              ) : null }
+              ) : null}
             </View>
             <View>
               <Text style={styles.label}>Modelo:</Text>
@@ -78,7 +95,7 @@ const AddDeviceView: React.FC<AddDeviceViewProps> = ({modalVisible,setModalVisib
               ></TextInput>
               {errors?.model ? (
                 <Text style={styles.textError}>{errors.model}</Text>
-              ) : null }
+              ) : null}
             </View>
 
 
@@ -88,7 +105,7 @@ const AddDeviceView: React.FC<AddDeviceViewProps> = ({modalVisible,setModalVisib
                 onValueChange={(value) => setDeviceProp("deviceCategoryId", value)}
                 items={[
                   { label: 'Celular', value: '1' },
-                  { label: 'Tableta', value: '2' },      
+                  { label: 'Tableta', value: '2' },
                   { label: 'PC', value: '3' },
                   { label: 'Laptop', value: '4' },
 
@@ -106,22 +123,23 @@ const AddDeviceView: React.FC<AddDeviceViewProps> = ({modalVisible,setModalVisib
               {errors?.deviceCategoryId ? <Text style={styles.textError}>{errors.deviceCategoryId}</Text> : null}
             </View>
 
-            
+
 
             <View style={styles.buttonsContainer}>
-      
+
               <Pressable
                 style={[styles.button, styles.buttonClose]}
                 onPress={() => setModalVisible(false)}
               >
                 <Text style={styles.textStyle}>Cancelar</Text>
               </Pressable>
-              
+
               <Pressable
                 style={[styles.button, styles.buttonSaving]}
+                //onPress={() => saveDevice(onSaved)}
                 onPress={handleSaveDevice}
               >
-                <Text style={styles.textStyle}>Registrar</Text>
+                <Text style={styles.textStyle}>Guardar</Text>
               </Pressable>
             </View>
           </View>
@@ -131,7 +149,7 @@ const AddDeviceView: React.FC<AddDeviceViewProps> = ({modalVisible,setModalVisib
   );
 };
 
-const AddDeviceScreen = (props: any) => (
+const AddDeviceScreen = (props: AddDeviceViewProps) => (
   <AddDeviceProvider>
     <AddDeviceView {...props} />
   </AddDeviceProvider>
