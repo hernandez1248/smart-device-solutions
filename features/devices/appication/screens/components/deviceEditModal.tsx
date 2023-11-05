@@ -40,7 +40,25 @@ const DeviceEditView: React.FC<DeviceEditViewProps> = ({
         setDevice(deviceEdit)
     }, [deviceEdit]);
 
-    
+
+
+
+    ////////////NUEVOS CAMBIOS    
+    const handleSaveDevice = async () => {
+
+        saveDevice(() => {
+            // Retrasa la aparición de la alerta
+            setTimeout(() => {
+                Alert.alert('Componente Actualizado', 'El Componente se actualizo correctamente', [
+                    { text: 'OK', onPress: () => { } },
+                ]);
+            }, 500); // Puedes ajustar el tiempo de retardo según tus necesidades
+
+            onSaved(device)
+        })
+
+
+    };
 
 
 
@@ -123,7 +141,8 @@ const DeviceEditView: React.FC<DeviceEditViewProps> = ({
                         <View style={styles.buttonsContainer}>
                             <Pressable
                                 style={[styles.button, styles.buttonSaving]}
-                                onPress={() => saveDevice(onSaved)}
+                                //onPress={() => saveDevice(onSaved)}
+                                onPress={handleSaveDevice}
                             >
                                 <Text style={styles.textStyle}>Guardar</Text>
                             </Pressable>

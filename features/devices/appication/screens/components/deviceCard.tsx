@@ -5,15 +5,22 @@ import { IconButton } from 'react-native-paper';
 type CardProps ={
     device: Device,
     onEdit?: Function,
+    onDelete?: Function,
 }
 
-const DeviceCard: React.FC<CardProps>= ({device, onEdit}) => {
+const DeviceCard: React.FC<CardProps>= ({device, onEdit, onDelete}) => {
       
-  console.log(device.model);
+  //console.log(device.model);
 
   const handleEdit = () => {
     if(onEdit){      
        onEdit(device);
+    }
+  }
+
+  const handleDelete = () => {
+    if(onDelete){      
+       onDelete(device);
     }
   }
   
@@ -39,9 +46,10 @@ const DeviceCard: React.FC<CardProps>= ({device, onEdit}) => {
             icon="delete"
             iconColor="red"
             size={20}
-            onPress={() => {
-              // Acción al presionar el botón de eliminar
-            }}
+            //onPress={() => { // Acción al presionar el botón de eliminar}}
+            onPress={
+              handleDelete
+            }
           />
         </View>
       </View>

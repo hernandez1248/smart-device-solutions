@@ -3,7 +3,6 @@ import Device from "../../domain/entities/device";
 import DevicesRepositoryImp from "../../infraestructure/repositories/devicesRepositoryImp";
 import DevicesDatasourceImp from "../../infraestructure/datasources/devicesDatasourceImp";
 
-
 //definir la estructura que tendra mi context
 interface ContextDefinition {
   //definición del estado
@@ -16,14 +15,15 @@ interface ContextDefinition {
 
   // acciones que tendrá mi context
   setDeviceProp: (property: string, value: any) => void,
-  saveDevice: (onSaved: Function)=> void,
+  deleteDevice: (onDeleted: Function)=> void,
+  setDevice:(device: Device) => void,
 }
 
 //crear el objeto context de react
-const AddDeviceContext = createContext({} as ContextDefinition);
+const DeleteDeviceContext = createContext({} as ContextDefinition);
 
-interface AddDeviceState {
-  //definición del estado
+interface DeleteDeviceState {
+  
   loading: boolean;
   saving: boolean,
   success: boolean,
@@ -33,7 +33,7 @@ interface AddDeviceState {
 }
 
 //definir los tipos de acciones que podra ejecutar el context / providers
-type AddDeviceActionType =
+type DeleteDeviceActionType =
   { type: "Set Loading"; payload: boolean }
   | { type: "Set Saving"; payload: boolean }
   | { type: "Set Success"; payload: { 
@@ -49,7 +49,7 @@ type AddDeviceActionType =
   } };
 
 //inicializar el state
-const initialState: AddDeviceState = {
+const initialState: DeleteDeviceState = {
   loading: false,
   saving: false,
   success: false,
@@ -63,12 +63,11 @@ const initialState: AddDeviceState = {
     errors: {},
 };
 
-function AddDeviceReducer(
-  state: AddDeviceState, 
-  action: AddDeviceActionType
+function DeleteDeviceReducer(
+  state: DeleteDeviceState, 
+  action: DeleteDeviceActionType
 ) {
   switch (action.type) {
-    //manipular el estado con base a las acciones
     case "Set Message":
       return { 
         ...state, 
@@ -110,8 +109,8 @@ type Props = {
   children?: ReactNode;
 };
 
-const AddDeviceProvider:FC<Props> = ({ children }) => {
-  const [state, dispatch] = useReducer(AddDeviceReducer, initialState);
+const DeleteDeviceProvider:FC<Props> = ({ children }) => {
+  const [state, dispatch] = useReducer(DeleteDeviceReducer, initialState);
 
   function setDeviceProp(property: string, value: any) {
     // mandar el valor al estado device
@@ -125,7 +124,7 @@ const AddDeviceProvider:FC<Props> = ({ children }) => {
   }
   
 
-  async function saveDevice(onSaved: Function) {
+  async function deleteDevice(onDeleted: Function) {
     const DevicesRepository = new DevicesRepositoryImp(
       new DevicesDatasourceImp
     )
@@ -134,8 +133,9 @@ const AddDeviceProvider:FC<Props> = ({ children }) => {
       type: 'Set Saving',
       payload: true,
     });
+    onDeleted(null)
     
-    const result = await DevicesRepository.addDevice(state.device);
+    const result = await DevicesRepository.deleteDevice(state.device);
     if(result.device) {
       dispatch({
         type: 'Set Success',
@@ -145,15 +145,10 @@ const AddDeviceProvider:FC<Props> = ({ children }) => {
           message: result.message,
         }
       });
-      /*
-      if (onSaved) {
-      return onSaved(false);
-
-      }
-      console.log(result);*/
       
-      onSaved(state.device);
+      
 
+      onDeleted(state.device);
 
       return;
     }
@@ -175,28 +170,37 @@ const AddDeviceProvider:FC<Props> = ({ children }) => {
     
   }
 
+  function setDevice(device:Device){
+    
+    dispatch({
+      type: 'Set Device',
+      payload: device
+    });
+  }
+
   return (
-    <AddDeviceContext.Provider value={{
+    <DeleteDeviceContext.Provider value={{
         ...state,
         
         //funciones
         setDeviceProp,
-        saveDevice,
+        deleteDevice,
+        setDevice,
       }}
     >
       {children}
-    </AddDeviceContext.Provider>
+    </DeleteDeviceContext.Provider>
   );
 }
 
-function useAddDeviceState() {
-  const context = useContext(AddDeviceContext);
+function useDeleteDeviceState() {
+  const context = useContext(DeleteDeviceContext);
   if (context === undefined) {
-    throw new Error("useAddDeviceState debe ser usado " + " con un AddDeviceProvider");
+    throw new Error("useDeleteDeviceState debe ser usado " + " con un DeleteDeviceProvider");
   }
   return context;
 }
 
-export { AddDeviceProvider, useAddDeviceState };
+export { DeleteDeviceProvider, useDeleteDeviceState };
 
 

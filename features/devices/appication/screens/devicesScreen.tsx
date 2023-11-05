@@ -6,6 +6,7 @@ import DeviceCard from './components/deviceCard';
 import { DevicesProvider, useDevicesState } from '../providers/devicesProvider';
 import AddDeviceView from './components/addDevice';
 import DeviceEditScreen from './components/deviceEditModal';
+import DeviceDeleteScreen from './components/deleteDevice';
 
 function DevicesScreenView() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -18,11 +19,15 @@ function DevicesScreenView() {
     devices, 
     loading,
     deviceSelected,
+    deviceSelectedDelete,
 
     //actions
     getDevices,
     setDeviceSelected,
-    onUpdatedDevice
+    setDeviceDelected,
+    onUpdatedDevice,
+    onSavedDevice,
+    onDeleteDevice
   } = useDevicesState();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -46,7 +51,7 @@ function DevicesScreenView() {
         `${device.brand}`.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    return filteredDevices.map((device) => <DeviceCard key={device.id} device={device} onEdit={setDeviceSelected}/>);
+    return filteredDevices.map((device) => <DeviceCard key={device.id} device={device} onEdit={setDeviceSelected} onDelete={setDeviceDelected}/>);
   };
 
   if (loading) {
@@ -79,9 +84,16 @@ function DevicesScreenView() {
         iconColor="#ffffff"
         size={30}
       />
-      <AddDeviceView modalVisible={modalVisible} setModalVisible={setModalVisible} />
+      <AddDeviceView modalVisible={modalVisible} setModalVisible={setModalVisible} onSaved = {onSavedDevice} />
+
       {!!deviceSelected ? (
       <DeviceEditScreen deviceEdit={deviceSelected} modalVisible={!!deviceSelected} onSaved={onUpdatedDevice} onCancelEdit={setDeviceSelected} />
+      ) : null}
+
+
+       {!!deviceSelectedDelete ? (
+      <DeviceDeleteScreen deviceDelete={deviceSelectedDelete} modalVisible={!!deviceSelectedDelete} onDeleted={onDeleteDevice} onCancelDelete={setDeviceDelected}/>
+
       ) : null}
 
        </View>

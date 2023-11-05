@@ -12,6 +12,12 @@ class DevicesRepositoryImp extends DevicesRepository {
         this.datasource = datasource;
     } 
 
+
+    deleteDevice(device : Device): Promise<AddDevicesResult> {
+
+        return this.datasource.deleteDevice(device);
+    }
+    
     addDevice(device : Device): Promise<AddDevicesResult> {
         return this.datasource.addDevice(device);
     }

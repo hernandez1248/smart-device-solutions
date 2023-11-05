@@ -10,10 +10,14 @@ interface ContextDefinition {
     loading: boolean,
     devices: Device[],
     deviceSelected: Device | null;
+    deviceSelectedDelete: Device | null;
     //acciones que tendra mi context
     getDevices: () => void;
     setDeviceSelected: (device: Device | null) => void;
+    setDeviceDelected: (device: Device | null) => void;
     onUpdatedDevice: (device: Device) => void;
+    onSavedDevice: (newDevice: Device) => void;
+    onDeleteDevice: (device: Device) => void;
 }
 
 //crear el objeto context de react
@@ -28,6 +32,7 @@ interface DevicesState {
     loading: boolean;
     devices: Device[];
     deviceSelected: Device | null;
+    deviceSelectedDelete: Device | null;
 }
 
 //definir los tipos de acciones que podra ejecutar el context / providers
@@ -35,12 +40,14 @@ type DevicesActionType =
     | { type: 'Set Loading', payload: boolean }
     | { type: 'Set Data', payload: DevicesResult }
     | { type: 'Set Device Selected', payload: Device | null }
+    | {type: 'Set Device Selected Deleted', payload: Device | null}
 
 //inicializar el state
 const initialState: DevicesState = {
     loading: false,
     devices: [],
-    deviceSelected: null
+    deviceSelected: null,
+    deviceSelectedDelete: null,
 
 }
 //definicion del reducer
@@ -63,6 +70,12 @@ function devicesReducer(state: DevicesState, action: DevicesActionType) {
                 ...state,
                 deviceSelected: action.payload,
             }
+        case 'Set Device Selected Deleted':
+            return {
+                ...state,
+                deviceSelectedDelete: action.payload,
+            }
+
 
         default:
             return state;
@@ -98,37 +111,111 @@ const DevicesProvider: FC<Props> = ({ children }) => {
             payload: apiResult,
         });
     };
-    function setDeviceSelected (device: Device | null){
+    function setDeviceSelected(device: Device | null) {
         //console.log(device);
-        
+
         dispatch({
             type: 'Set Device Selected',
             payload: device,
         });
     }
 
+    function setDeviceDelected (device: Device | null) {
+        console.log("dispositivo:", device);
+        dispatch({
+            type: 'Set Device Selected Deleted',
+            payload: device,
+        });
+
+    }
+
     /**
     *Actualiza el registro en la lista de devices y cierra el modal de editar
     * @param device Dispositivo actualizado4 
     */
-    function onUpdatedDevice(device:Device){
+    function onUpdatedDevice(device: Device) {
         //buscar el registro en devices,y remplazarlo
         //actualizar el estado users
+
         const devicesClone = [...state.devices];
         const index = devicesClone.findIndex((item) => item.id == device.id);
         devicesClone.splice(index, 1, device);
+
+
         dispatch({
             type: 'Set Data',
             payload: {
                 devices: devicesClone,
             }
         });
-
-
-
         //cierra el modal
         setDeviceSelected(null)
     }
+
+    /*function onSavedDevice(newDevice: Device) {
+
+        // Crear una copia de la lista actual de dispositivos
+        const devicesAddClone = [...state.devices];
+
+        // Agregar el nuevo dispositivo a la lista
+        devicesAddClone.push(newDevice);
+
+        dispatch({
+            type: 'Set Data',
+            payload: {
+                devices: devicesAddClone,
+            }
+        });
+
+        // Cerrar el modal
+        //setModalVisible(false);
+    }*/
+
+
+    async function onSavedDevice(){
+        const repository = new DevicesRepositoryImp(
+            new DevicesDatasourceImp()
+        );
+
+        //cambiar el state a loading
+        dispatch({
+            type: 'Set Loading',
+            payload: true,
+        });
+
+        const dateOn = await repository.getDevices();
+
+        dispatch({
+            type: 'Set Data',
+            payload: dateOn,
+        });
+    };
+
+
+    /*function onDeleteDevice (device: Device)*/
+
+
+      function onDeleteDevice(device: Device) {
+        const devicesCloneDelete = [...state.devices];
+        const index = devicesCloneDelete.findIndex((item) => item.id === device.id);
+      
+        if (index !== -1) {
+          devicesCloneDelete.splice(index, 1);
+          dispatch({
+            type: 'Set Data',
+            payload: {
+              devices: devicesCloneDelete,
+            },
+          });
+        }
+        
+        // Cierra el modal u realiza cualquier otra acción necesaria
+        // (puedes manejar esto según tus necesidades)
+        setDeviceSelected(null);
+      }
+      
+      
+
 
     //retornar la estructura del provider
     return (
@@ -136,7 +223,10 @@ const DevicesProvider: FC<Props> = ({ children }) => {
             ...state,
             getDevices,
             setDeviceSelected,
-            onUpdatedDevice
+            setDeviceDelected,
+            onUpdatedDevice,
+            onSavedDevice,
+            onDeleteDevice,
         }}>
             {children}
         </DevicesContext.Provider>
