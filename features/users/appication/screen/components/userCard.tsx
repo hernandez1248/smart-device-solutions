@@ -1,32 +1,53 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import User from '../../../domain/entities/user';
 import { FontAwesome5 } from '@expo/vector-icons';
+import UserEditScreen from './userEditModal';
 
 type CardProps = {
-  user: User;
+  user: User,
+  onEdit?: Function,
 };
 
-const UserCard: React.FC<CardProps> = (props) => {
+const UserCard: React.FC<CardProps> = ({
+  user,
+  onEdit,
+}) => {
   const [menuVisible, setMenuVisible] = useState(false);
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
 
+  const handleEdit = () => {
+   /*  setUserToEdit(user)
+    setModalUpdateVisible(true); */
+    
+    toggleMenu();
+    if (onEdit) {
+      onEdit(user);
+    }
+  };
+
   return (
     <View>
-      <View style={styles.row}>
-        <Text style={styles.column}>
-          {props.user.name} {props.user.lastName}
-        </Text>
-        <Text style={[styles.column2, styles.boldText]}>
-          {props.user.rol}
-        </Text>
-        <TouchableOpacity onPress={toggleMenu}>
-          <FontAwesome5 name="ellipsis-h" style={styles.menuButton} />
-        </TouchableOpacity>
-      </View>
+    <View style={styles.row}>
+    <View style={{ borderRadius: 15, overflow: 'hidden' }}>
+      <Image
+        source={{ uri: `${user.image}` }}
+        style={{ width: 35, height: 35 }}
+      />
+    </View>
+      <Text style={styles.column}>
+        {user.name} {user.lastName}
+      </Text>
+      <Text style={[styles.column2, styles.boldText]}>
+        {user.rol}
+      </Text>
+      <TouchableOpacity onPress={toggleMenu}>
+        <FontAwesome5 name="ellipsis-h" style={styles.menuButton} />
+      </TouchableOpacity>
+    </View>
       {menuVisible && (
         <View style={styles.menu}>
           <TouchableOpacity
@@ -43,10 +64,7 @@ const UserCard: React.FC<CardProps> = (props) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.menuItem}
-            onPress={() => {
-              // Acción al presionar "Editar"
-              toggleMenu();
-            }}
+            onPress={handleEdit} // Llama a handleEdit en lugar de showUpdateModal
           >
             <View style={styles.menuView}>
               <FontAwesome5 name="edit" style={[styles.menuIcon, { color: 'blue' }]} />
@@ -68,10 +86,15 @@ const UserCard: React.FC<CardProps> = (props) => {
         </View>
       )}
       <View style={styles.horizontalLine} />
+      
+      {/* <UserEditScreen
+        modalUpdateVisible={modalUpdateVisible}
+        setModalUpdateVisible={setModalUpdateVisible}
+        userToEdit={userToEdit} // Pasa el usuario que se va a editar al modal
+      /> */}
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   row: {
@@ -82,7 +105,8 @@ const styles = StyleSheet.create({
   column: {
     flex: 1,
     fontSize: 14,
-    marginTop: 12
+    marginTop: 12,
+    marginLeft: 8
   },
   column2: {
     flex: 1,

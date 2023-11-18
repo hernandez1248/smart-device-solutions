@@ -9,9 +9,12 @@ interface ContextDefinition {
   //definición del estado
   loading: boolean;
   users: User[];
+  userSelected: User | null,
 
   //acciones que tendra mi context
   getUsers: () => void;
+  setUserSelected: (user: User | null) => void;
+  onUpdatedUser: (user: User) => void;
 }
 
 //crear el objeto context de react
@@ -25,17 +28,20 @@ interface UsersState {
   //definición del estado
   loading: boolean;
   users: User[];
+  userSelected: User | null,
 }
 
 //definir los tipos de acciones que podra ejecutar el context / providers
 type UsersActionType =
   | { type: "Set Loading"; payload: boolean }
-  | { type: "Set Data"; payload: UsersResult };
+  | { type: "Set Data"; payload: UsersResult }
+  | { type: "Set User Selected"; payload: User | null };
 
 //inicializar el state
 const initialState: UsersState = {
   loading: false,
   users: [],
+  userSelected: null,
 };
 
 //definición del reducer
@@ -45,7 +51,9 @@ function usersReducer(state: UsersState, action: UsersActionType) {
   switch (action.type) {
     //manipular el estado con base a las acciones
     case "Set Loading":
-      return { ...state, loading: action.payload };
+      return { 
+        ...state, 
+        loading: action.payload };
     case "Set Data":
       return {
         ...state,
@@ -54,7 +62,11 @@ function usersReducer(state: UsersState, action: UsersActionType) {
 
         //otras manipulaciones de estado
       };
-
+    case "Set User Selected": 
+      return {
+        ...state, 
+        userSelected: action.payload,
+      }
     default:
       return state;
   }
@@ -88,12 +100,45 @@ const UsersProvider: FC<Props> = ({ children }) => {
     });
   };
 
+  function setUserSelected (user: User | null) {
+    console.log(user);
+    
+    dispatch({
+      type: "Set User Selected",
+      payload: user,
+    });
+  }
+
+  /**
+   * Actualiza el registro en la lista de users y cierra el modal de editar
+   * @param user Usuario actualizado 
+   */
+  function onUpdatedUser (user: User) {
+    // buscar el registro en users, y reemplazarlo
+    // actualizar el estado users
+    const usersClone = [...state.users];
+    const index = usersClone.findIndex((item) => item.id == user.id);
+    usersClone.splice(index, 1, user);
+
+    dispatch({
+      type: "Set Data",
+      payload: {
+        users: usersClone,
+      }
+    })
+
+    // cerrar el modal 
+    setUserSelected(null);
+  }
+
   //retornar la estructura del provider
   return (
     <UsersContext.Provider
       value={{
         ...state,
         getUsers,
+        setUserSelected,
+        onUpdatedUser,
       }}
     >
       {children}
