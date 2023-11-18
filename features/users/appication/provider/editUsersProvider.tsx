@@ -15,13 +15,14 @@ interface ContextDefinition {
 
   // acciones que tendrá mi context
   setUserProp: (property: string, value: any) => void,
-  saveUser: (onSaved: Function)=> void,
+  saveUser: (onSaved: Function) => void,
+  setUser: (user: User) => void,
 }
 
 //crear el objeto context de react
-const AddUserContext = createContext({} as ContextDefinition);
+const EditUserContext = createContext({} as ContextDefinition);
 
-interface AddUserState {
+interface EditUserState {
   //definición del estado
   loading: boolean;
   saving: boolean,
@@ -32,7 +33,7 @@ interface AddUserState {
 }
 
 //definir los tipos de acciones que podra ejecutar el context / providers
-type AddUserActionType =
+type EditUserActionType =
   { type: "Set Loading"; payload: boolean }
   | { type: "Set Saving"; payload: boolean }
   | { type: "Set Success"; payload: { 
@@ -48,7 +49,7 @@ type AddUserActionType =
   } };
 
 //inicializar el state
-const initialState: AddUserState = {
+const initialState: EditUserState = {
   loading: false,
   saving: false,
   success: false,
@@ -66,9 +67,9 @@ const initialState: AddUserState = {
     errors: {},
 };
 
-function AddUserReducer(
-  state: AddUserState, 
-  action: AddUserActionType
+function EditUserReducer(
+  state: EditUserState, 
+  action: EditUserActionType
 ) {
   switch (action.type) {
     //manipular el estado con base a las acciones
@@ -95,7 +96,7 @@ function AddUserReducer(
         message: action.payload.message,
         saving: false,
       }
-      case "Set Success":
+    case "Set Success":
       return {
         ...state,
         success: action.payload.success,
@@ -113,8 +114,8 @@ type Props = {
   children?: ReactNode;
 };
 
-const AddUserProvider:FC<Props> = ({ children }) => {
-  const [state, dispatch] = useReducer(AddUserReducer, initialState);
+const EditUserProvider:FC<Props> = ({ children }) => {
+  const [state, dispatch] = useReducer(EditUserReducer, initialState);
 
   function setUserProp(property: string, value: any) {
     // mandar el valor al estado user
@@ -129,13 +130,15 @@ const AddUserProvider:FC<Props> = ({ children }) => {
 
   async function saveUser(onSaved: Function) {
     const usersRepository = new UsersRepositoryImp(
-      new UsersDatasourceImp
+      new UsersDatasourceImp()
     )
     // envir los datos al backend
     dispatch({
       type: 'Set Saving',
       payload: true,
     });
+
+    console.log(state.user);
     
     const result = await usersRepository.addUser(state.user);
     if(result.user) {
@@ -147,12 +150,9 @@ const AddUserProvider:FC<Props> = ({ children }) => {
           message: result.message,
         }
       });
-      if (onSaved) {
-        onSaved(false);
-      }
-      console.log(result);
-
-
+      
+      // si ya se guardó, mandar a cerrar el modal
+      onSaved(state.user);
       return;
     }
 
@@ -169,32 +169,39 @@ const AddUserProvider:FC<Props> = ({ children }) => {
         errors,
       },
     });
-    
-    
+
+    // test para cerrar al guardar
+    onSaved(state.user)
   }
 
+    function setUser(user: User) {
+      dispatch({
+        type: 'Set User',
+        payload: user,
+      });
+    }
+
   return (
-    <AddUserContext.Provider value={{
+    <EditUserContext.Provider value={{
         ...state,
         
         //funciones
         setUserProp,
         saveUser,
+        setUser, 
       }}
     >
       {children}
-    </AddUserContext.Provider>
+    </EditUserContext.Provider>
   );
 }
 
-function useAddUserState() {
-  const context = useContext(AddUserContext);
+function useEditUserState() {
+  const context = useContext(EditUserContext);
   if (context === undefined) {
-    throw new Error("useAddUserState debe ser usado " + " con un AddUserProvider");
+    throw new Error("useEditUserState debe ser usado " + " con un EditUserProvider");
   }
   return context;
 }
 
-export { AddUserProvider, useAddUserState };
-
-
+export { EditUserProvider, useEditUserState };

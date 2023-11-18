@@ -4,6 +4,7 @@ class User {
     name: string;
     lastName: string;
     phone: string;
+    image: string;
     email: string;
     rol: string;
     password?: string;
@@ -12,6 +13,7 @@ class User {
         name: string,
         lastName: string,
         phone: string,
+        image: string,
         email: string,
         rol: string,
         id?: number,
@@ -21,6 +23,7 @@ class User {
         this.name = name;
         this.lastName = lastName;
         this.phone = phone;
+        this.image = image;
         this.email = email;
         this.rol = rol;
         this.password = password;

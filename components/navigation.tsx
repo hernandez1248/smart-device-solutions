@@ -54,7 +54,7 @@ function MyTabs() {
       <Tab.Screen
         name="Orders"
         component={OrderScreen}
-        options={{ headerShown: false, tabBarLabel: "Agregar" }}
+        options={{ headerShown: false, tabBarLabel: "Ordenes" }}
       />
       <Tab.Screen
         name="Devices"

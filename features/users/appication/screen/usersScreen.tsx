@@ -5,6 +5,7 @@ import { Searchbar, IconButton } from 'react-native-paper';
 import UserCard from './components/userCard';
 import { UsersProvider, useUsersState } from '../provider/usersProvider';
 import AddUserView from './components/addUser';
+import UserEditScreen from './components/userEditModal';
 
 function UsersScreenView() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -14,18 +15,20 @@ function UsersScreenView() {
   };
   
   const { 
-    users, 
     loading,
+    users,
+    userSelected, 
 
     //actions
-    getUsers 
+    getUsers,
+    setUserSelected,
+    onUpdatedUser,
   } = useUsersState();
 
   const [searchQuery, setSearchQuery] = useState('');
 
   const onChangeSearch = (query: string) => {
     setSearchQuery(query);
-    // Realiza la lógica de filtrado y actualización del estado de los usuarios aquí
   };
 
   useEffect(() => {
@@ -42,7 +45,13 @@ function UsersScreenView() {
         `${user.name} ${user.lastName}`.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    return filteredUsers.map((user) => <UserCard key={user.id} user={user} />);
+    return filteredUsers.map((user) => ( 
+      <UserCard 
+        key={user.id} 
+        user={user} 
+        onEdit={setUserSelected}
+      />)
+    );
   };
 
   if (loading) {
@@ -75,6 +84,15 @@ function UsersScreenView() {
         iconColor="#ffffff"
         size={30}
       />
+      {!!userSelected ? (
+        <UserEditScreen
+          userEdit={userSelected}
+          modalVisible={!!userSelected}
+          onSaved={onUpdatedUser}
+          onCancelEdit={setUserSelected}
+        />
+      ): null}
+      
       <AddUserView modalVisible={modalVisible} setModalVisible={setModalVisible} />
     </View>
   );

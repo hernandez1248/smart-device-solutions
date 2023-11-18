@@ -1,16 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { View, Modal, Text, TextInput, StyleSheet, Pressable, Dimensions, Alert } from "react-native";
-import { AddUserProvider, useAddUserState } from "../../provider/addUsersProvider";
+import User from "../../../domain/entities/user";
+import { EditUserProvider, useEditUserState } from "../../provider/editUsersProvider";
 
-
-interface AddUserViewProps {
+interface UserEditViewProps {
+  userEdit: User,
+  onSaved: Function,
   modalVisible: boolean;
-  setModalVisible: (visible: boolean) => void;
+  onCancelEdit: Function,
 }
 
-const AddUserView: React.FC<AddUserViewProps> = ({
+const UserEditView: React.FC<UserEditViewProps> = ({
+  userEdit,
+  onSaved,
   modalVisible,
-  setModalVisible,
+  onCancelEdit,
 }) => {
   const {
     message,
@@ -19,22 +23,15 @@ const AddUserView: React.FC<AddUserViewProps> = ({
     success,
     user,
     errors,
-
     setUserProp,
     saveUser,
-  } = useAddUserState();
+    setUser,
+  } = useEditUserState();
 
-  const handleSaveUser = () => {
-    saveUser(() => {
-      setModalVisible(false); 
-  
-      setTimeout(() => {
-        Alert.alert('Usuario Registrado', 'El usuario se ha registrado correctamente.', [
-          { text: 'OK', onPress: () => {} },
-        ]);
-      }, 500); // Puedes ajustar el tiempo de retardo según tus necesidades
-    });
-  };
+  // al recibir el usuario a editar, pasarlo al proveedor de estado
+  useEffect(() => {
+    setUser(userEdit)
+  }, [userEdit]);
 
   return (
     <View style={styles.centeredView}>
@@ -43,26 +40,25 @@ const AddUserView: React.FC<AddUserViewProps> = ({
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
-          setModalVisible(false);
+          onCancelEdit(null);
         }}
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.title}>Registrar Usuario</Text>
+            <Text style={styles.title}>Editar Usuario</Text>
             <View>
               {/* <Text style={success ? styles.success : styles.alert}>{message}</Text> */}
-
               <Text style={styles.label}>Nombre:</Text>
               <TextInput
                 style={[styles.textInput, (errors?.name ? styles.textError : null)]}
                 placeholder=" Ingresa el nombre"
-                value={user?.name || ""}
+                value={user?.name || ""} 
                 onChangeText={(text) => {
                   setUserProp("name", text);
                 }}
                 textContentType="name"
-              ></TextInput>
-                {errors?.name ? (
+              />
+              {errors?.name ? (
                 <Text style={styles.textError}>{errors.name}</Text>
               ) : null }
             </View>
@@ -126,7 +122,7 @@ const AddUserView: React.FC<AddUserViewProps> = ({
                 <Text style={styles.textError}>{errors.email}</Text>
               ) : null }
             </View>
-            <View>
+            {/* <View>
               <Text style={styles.label}>Contraseña:</Text>
               <TextInput
                 style={[styles.textInput, (errors?.password ? styles.textError : null)]}
@@ -140,7 +136,7 @@ const AddUserView: React.FC<AddUserViewProps> = ({
               {errors?.password ? (
                 <Text style={styles.textError}>{errors.password}</Text>
               ) : null }
-            </View>
+            </View> */}
             <View>
               <Text style={styles.label}>Rol:</Text>
               <TextInput
@@ -161,16 +157,25 @@ const AddUserView: React.FC<AddUserViewProps> = ({
       
               <Pressable
                 style={[styles.button, styles.buttonClose]}
-                onPress={() => setModalVisible(false)}
+                onPress={() => {
+                  onCancelEdit(null);
+                }}
               >
                 <Text style={styles.textStyle}>Cancelar</Text>
               </Pressable>
               
               <Pressable
                 style={[styles.button, styles.buttonSaving]}
-                onPress={handleSaveUser}
+                onPress={() => {
+                  saveUser(onSaved);
+                  setTimeout(() => {
+                    Alert.alert('Usuario Actualizado', 'El usuario ha sido actualizado.', [
+                      { text: 'OK', onPress: () => {} },
+                    ]);
+                  }, 500);
+                }}
               >
-                <Text style={styles.textStyle}>Registrar</Text>
+                <Text style={styles.textStyle}>Actualizar</Text>
               </Pressable>
             </View>
           </View>
@@ -180,11 +185,12 @@ const AddUserView: React.FC<AddUserViewProps> = ({
   );
 };
 
-const AddUserScreen = (props: any) => (
-  <AddUserProvider>
-    <AddUserView {...props} />
-  </AddUserProvider>
+const UserEditScreen = (props: UserEditViewProps) => (
+  <EditUserProvider>
+    <UserEditView {...props} />
+  </EditUserProvider>
 );
+
 
 const { width } = Dimensions.get("window"); // Obtiene el ancho de la pantalla
 
@@ -216,15 +222,15 @@ const styles = StyleSheet.create({
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    width: width * 0.7,
-    marginTop: 20, 
+    width: width * 0.7, // Ajusta el ancho según tus necesidades
+    marginTop: 20, // Espacio entre los botones y los campos de texto
   },
   button: {
-    flex: 1,
+    flex: 1, // Esto hará que ambos botones tengan el mismo ancho
     borderRadius: 20,
     padding: 10,
     elevation: 2,
-    marginHorizontal: 5, 
+    marginHorizontal: 5, // Espacio entre los botones
   },
   buttonSaving: {
     backgroundColor: "#2196F3",
@@ -265,4 +271,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddUserScreen;
+export default UserEditScreen;
