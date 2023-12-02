@@ -5,6 +5,9 @@ import UsersResult from "../../domain/entities/usersResult";
 import UsersRepository from "../../domain/repositories/usersRepository";
 
 class UsersRepositoryImp extends UsersRepository {
+  deleteUser(user: User): Promise<AddUsersResult> {
+    return this.datasource.deleteUser(user);
+  }
   datasource: UsersDatasource;
 
   constructor(datasource: UsersDatasource) {

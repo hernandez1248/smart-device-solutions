@@ -15,13 +15,14 @@ interface ContextDefinition {
 
   // acciones que tendrá mi context
   setUserProp: (property: string, value: any) => void,
-  saveUser: (onSaved: Function)=> void,
+  deleteUser: (onDeleted: Function)=> void,
+  setUser: (user: User) => void,
 }
 
 //crear el objeto context de react
-const AddUserContext = createContext({} as ContextDefinition);
+const DeleteUserContext = createContext({} as ContextDefinition);
 
-interface AddUserState {
+interface DeleteUserState {
   //definición del estado
   loading: boolean;
   saving: boolean,
@@ -32,7 +33,7 @@ interface AddUserState {
 }
 
 //definir los tipos de acciones que podra ejecutar el context / providers
-type AddUserActionType =
+type DeleteUserActionType =
   { type: "Set Loading"; payload: boolean }
   | { type: "Set Saving"; payload: boolean }
   | { type: "Set Success"; payload: { 
@@ -48,7 +49,7 @@ type AddUserActionType =
   } };
 
 //inicializar el state
-const initialState: AddUserState = {
+const initialState: DeleteUserState = {
   loading: false,
   saving: false,
   success: false,
@@ -59,16 +60,16 @@ const initialState: AddUserState = {
     '', 
     '',
     '',
-    'empleado',
+    '',
     undefined,
     ''
     ),
     errors: {},
 };
 
-function AddUserReducer(
-  state: AddUserState, 
-  action: AddUserActionType
+function DeleteUserReducer(
+  state: DeleteUserState, 
+  action: DeleteUserActionType
 ) {
   switch (action.type) {
     //manipular el estado con base a las acciones
@@ -95,7 +96,7 @@ function AddUserReducer(
         message: action.payload.message,
         saving: false,
       }
-      case "Set Success":
+    case "Set Success":
       return {
         ...state,
         success: action.payload.success,
@@ -113,8 +114,8 @@ type Props = {
   children?: ReactNode;
 };
 
-const AddUserProvider:FC<Props> = ({ children }) => {
-  const [state, dispatch] = useReducer(AddUserReducer, initialState);
+const DeleteUserProvider:FC<Props> = ({ children }) => {
+  const [state, dispatch] = useReducer(DeleteUserReducer, initialState);
 
   function setUserProp(property: string, value: any) {
     // mandar el valor al estado user
@@ -127,17 +128,20 @@ const AddUserProvider:FC<Props> = ({ children }) => {
     });
   }
 
-  async function saveUser(onSaved: Function) {
+  async function deleteUser(onDeleted: Function) {
     const usersRepository = new UsersRepositoryImp(
-      new UsersDatasourceImp
+      new UsersDatasourceImp()
     )
     // envir los datos al backend
     dispatch({
       type: 'Set Saving',
       payload: true,
     });
+    onDeleted(null)
+
+    console.log(state.user);
     
-    const result = await usersRepository.addUser(state.user);
+    const result = await usersRepository.deleteUser(state.user);
     if(result.user) {
       dispatch({
         type: 'Set Success',
@@ -147,11 +151,8 @@ const AddUserProvider:FC<Props> = ({ children }) => {
           message: result.message,
         }
       });
-      if (onSaved) {
-        onSaved(false);
-      }
-      console.log(result);
-
+      
+      onDeleted(state.user);
       return;
     }
 
@@ -168,30 +169,36 @@ const AddUserProvider:FC<Props> = ({ children }) => {
         errors,
       },
     });
-    
-    
   }
 
+    function setUser(user: User) {
+      dispatch({
+        type: 'Set User',
+        payload: user,
+      });
+    }
+
   return (
-    <AddUserContext.Provider value={{
+    <DeleteUserContext.Provider value={{
         ...state,
         
         //funciones
         setUserProp,
-        saveUser,
+        deleteUser,
+        setUser, 
       }}
     >
       {children}
-    </AddUserContext.Provider>
+    </DeleteUserContext.Provider>
   );
 }
 
-function useAddUserState() {
-  const context = useContext(AddUserContext);
+function useDeleteUserState() {
+  const context = useContext(DeleteUserContext);
   if (context === undefined) {
-    throw new Error("useAddUserState debe ser usado " + " con un AddUserProvider");
+    throw new Error("useDeleteUserState debe ser usado " + " con un DeleteUserProvider");
   }
   return context;
 }
 
-export { AddUserProvider, useAddUserState };
+export { DeleteUserProvider, useDeleteUserState };

@@ -6,6 +6,8 @@ import UserCard from './components/userCard';
 import { UsersProvider, useUsersState } from '../provider/usersProvider';
 import AddUserView from './components/addUser';
 import UserEditScreen from './components/userEditModal';
+import UserDeleteScreen from './components/deteleUser';
+import UserViewScreen from './components/viewUser';
 
 function UsersScreenView() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -17,12 +19,17 @@ function UsersScreenView() {
   const { 
     loading,
     users,
-    userSelected, 
+    userSelected,
+    userSelectedDelete, 
+    userView,
 
     //actions
     getUsers,
     setUserSelected,
+    setUserDelected,
+    setUserView,
     onUpdatedUser,
+    onDeleteUser,
   } = useUsersState();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -50,6 +57,8 @@ function UsersScreenView() {
         key={user.id} 
         user={user} 
         onEdit={setUserSelected}
+        onView={setUserView}
+        onDelete={setUserDelected}
       />)
     );
   };
@@ -94,6 +103,20 @@ function UsersScreenView() {
       ): null}
       
       <AddUserView modalVisible={modalVisible} setModalVisible={setModalVisible} />
+
+      {!!userSelectedDelete ? (
+      <UserDeleteScreen userDelete={userSelectedDelete} modalVisible={!!userSelectedDelete} onDeleted={onDeleteUser} onCancelDelete={setUserDelected}/>
+
+      ) : null}
+
+     {!!userView ? (
+        <UserViewScreen
+          userEdit={userView}
+          modalVisible={!!userView}
+          onSaved={onUpdatedUser}
+          onCancelEdit={setUserView}
+        />
+      ): null}
     </View>
   );
 }

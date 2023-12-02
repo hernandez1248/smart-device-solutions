@@ -6,6 +6,32 @@ import UsersResult from "../../domain/entities/usersResult";
 
 class UsersDatasourceImp extends UsersDatasource {
   
+  async deleteUser(user: User): Promise<AddUsersResult> {
+    return fetch(
+      `${backendConfig.url}/api/users?id=${user.id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((response) => {
+        //console.log(response);
+
+        const result = new AddUsersResult(
+          response.message,
+          response.user || null
+        );
+        result.errors = response.errors || null;
+        result.error = response.error || false;
+        console.log(response);
+
+        return result;
+      });
+  }
+
   async addUser(user: User): Promise<AddUsersResult> {
     return fetch(`${backendConfig.url}/api/users`, {
       method: !user.id ? "POST" : "PUT",
@@ -14,16 +40,18 @@ class UsersDatasourceImp extends UsersDatasource {
         "Content-Type": "application/json",
       },
     })
-    .then((response) => response.json())
-    .then((response) => {
-      
-      const result = new AddUsersResult(response.message, response.user || null);
-      result.errors = response.errors || null;
-      result.error = response.error || false;
-      console.log(response);
-      
-      return result;
-    });
+      .then((response) => response.json())
+      .then((response) => {
+        const result = new AddUsersResult(
+          response.message,
+          response.user || null
+        );
+        result.errors = response.errors || null;
+        result.error = response.error || false;
+        console.log(response);
+
+        return result;
+      });
   }
 
   async getUsers(): Promise<UsersResult> {
@@ -40,7 +68,7 @@ class UsersDatasourceImp extends UsersDatasource {
               item.email,
               item.rol,
               item.id,
-              item.password,
+              item.password
             )
         );
 

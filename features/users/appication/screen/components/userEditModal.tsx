@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
-import { View, Modal, Text, TextInput, StyleSheet, Pressable, Dimensions, Alert } from "react-native";
+import { View, Modal, Text, TextInput, StyleSheet, Pressable, Dimensions, Alert, ScrollView } from "react-native";
 import User from "../../../domain/entities/user";
 import { EditUserProvider, useEditUserState } from "../../provider/editUsersProvider";
+import RNPickerSelect from 'react-native-picker-select';
 
 interface UserEditViewProps {
   userEdit: User,
@@ -34,7 +35,7 @@ const UserEditView: React.FC<UserEditViewProps> = ({
   }, [userEdit]);
 
   return (
-    <View style={styles.centeredView}>
+    <View>
       <Modal
         animationType="slide"
         transparent={true}
@@ -43,7 +44,7 @@ const UserEditView: React.FC<UserEditViewProps> = ({
           onCancelEdit(null);
         }}
       >
-        <View style={styles.centeredView}>
+        <ScrollView style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.title}>Editar Usuario</Text>
             <View>
@@ -122,37 +123,26 @@ const UserEditView: React.FC<UserEditViewProps> = ({
                 <Text style={styles.textError}>{errors.email}</Text>
               ) : null }
             </View>
-            {/* <View>
-              <Text style={styles.label}>Contraseña:</Text>
-              <TextInput
-                style={[styles.textInput, (errors?.password ? styles.textError : null)]}
-                placeholder=" Ingresa la contraseña"
-                value={user?.password || ""}
-                onChangeText={(text) => {
-                  setUserProp("password", text);
-                }}
-                textContentType="name"
-              />
-              {errors?.password ? (
-                <Text style={styles.textError}>{errors.password}</Text>
-              ) : null }
-            </View> */}
             <View>
               <Text style={styles.label}>Rol:</Text>
-              <TextInput
-                style={[styles.textInput, (errors?.rol ? styles.textError : null)]}
-                placeholder=" Ingresa el rol"
-                value={user?.rol || ""}
-                onChangeText={(text) => {
-                  setUserProp("rol", text);
+              <RNPickerSelect
+                onValueChange={(value) => setUserProp("rol", value)}
+                items={[
+                  { label: 'Administrador', value: 'administrador' },
+                  { label: 'Empleado', value: 'empleado' },
+                ]}
+                style={{
+                  inputIOS: styles.textInput,
+                  inputAndroid: styles.textInput,
                 }}
-                textContentType="name"
+                value={user?.rol}
+                placeholder={{
+                  label: 'Selecciona un Rol',
+                  value: null,
+                }}
               />
-              {errors?.rol ? (
-                <Text style={styles.textError}>{errors.rol}</Text>
-              ) : null }
+              {errors?.rol ? <Text style={styles.textError}>{errors.rol}</Text> : null}
             </View>
-
             <View style={styles.buttonsContainer}>
       
               <Pressable
@@ -179,7 +169,7 @@ const UserEditView: React.FC<UserEditViewProps> = ({
               </Pressable>
             </View>
           </View>
-        </View>
+        </ScrollView>
       </Modal>
     </View>
   );
@@ -191,14 +181,10 @@ const UserEditScreen = (props: UserEditViewProps) => (
   </EditUserProvider>
 );
 
-
 const { width } = Dimensions.get("window"); // Obtiene el ancho de la pantalla
 
 const styles = StyleSheet.create({
   centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
     marginTop: 40,
   },
   modalView: {

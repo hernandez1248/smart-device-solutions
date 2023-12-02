@@ -2,16 +2,19 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import User from '../../../domain/entities/user';
 import { FontAwesome5 } from '@expo/vector-icons';
-import UserEditScreen from './userEditModal';
 
 type CardProps = {
   user: User,
   onEdit?: Function,
+  onDelete?: Function,
+  onView?: Function,
 };
 
 const UserCard: React.FC<CardProps> = ({
   user,
   onEdit,
+  onDelete,
+  onView,
 }) => {
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -28,6 +31,23 @@ const UserCard: React.FC<CardProps> = ({
       onEdit(user);
     }
   };
+
+  const handleView = () => {
+    /*  setUserToEdit(user)
+     setModalUpdateVisible(true); */
+     
+     toggleMenu();
+     if (onView) {
+       onView(user);
+     }
+   };
+ 
+
+  const handleDelete = () => {
+    if(onDelete){      
+       onDelete(user);
+    }
+  }
 
   return (
     <View>
@@ -55,6 +75,7 @@ const UserCard: React.FC<CardProps> = ({
             onPress={() => {
               // Acción al presionar "Ver"
               toggleMenu();
+              handleView();
             }}
           >
             <View style={styles.menuView}>
@@ -76,6 +97,7 @@ const UserCard: React.FC<CardProps> = ({
             onPress={() => {
               // Acción al presionar "Eliminar"
               toggleMenu();
+              handleDelete();
             }}
           >
             <View style={styles.menuView}>
@@ -86,12 +108,6 @@ const UserCard: React.FC<CardProps> = ({
         </View>
       )}
       <View style={styles.horizontalLine} />
-      
-      {/* <UserEditScreen
-        modalUpdateVisible={modalUpdateVisible}
-        setModalUpdateVisible={setModalUpdateVisible}
-        userToEdit={userToEdit} // Pasa el usuario que se va a editar al modal
-      /> */}
     </View>
   );
 };
@@ -100,7 +116,8 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20
+    marginTop: 20,
+    height: 'auto'
   },
   column: {
     flex: 1,
@@ -132,7 +149,7 @@ const styles = StyleSheet.create({
     top: 35,
     right: 25,
     zIndex: 1,
-    borderRadius: 10
+    borderRadius: 10,
   },
   menuItem: {
     padding: 10,

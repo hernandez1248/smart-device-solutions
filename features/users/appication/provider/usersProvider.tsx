@@ -10,11 +10,16 @@ interface ContextDefinition {
   loading: boolean;
   users: User[];
   userSelected: User | null,
+  userView: User | null,
+  userSelectedDelete: User | null;
 
   //acciones que tendra mi context
   getUsers: () => void;
   setUserSelected: (user: User | null) => void;
+  setUserDelected: (user: User | null) => void;
+  setUserView: (user: User | null) => void;
   onUpdatedUser: (user: User) => void;
+  onDeleteUser: (user: User) => void;
 }
 
 //crear el objeto context de react
@@ -29,19 +34,25 @@ interface UsersState {
   loading: boolean;
   users: User[];
   userSelected: User | null,
+  userView: User | null,
+  userSelectedDelete: User | null;
 }
 
 //definir los tipos de acciones que podra ejecutar el context / providers
 type UsersActionType =
   | { type: "Set Loading"; payload: boolean }
   | { type: "Set Data"; payload: UsersResult }
-  | { type: "Set User Selected"; payload: User | null };
+  | { type: "Set User Selected"; payload: User | null }
+  | { type: "Set User View"; payload: User | null }
+  | {type: 'Set User Selected Deleted', payload: User | null};
 
 //inicializar el state
 const initialState: UsersState = {
   loading: false,
   users: [],
   userSelected: null,
+  userSelectedDelete: null,
+  userView: null,
 };
 
 //definición del reducer
@@ -66,6 +77,16 @@ function usersReducer(state: UsersState, action: UsersActionType) {
       return {
         ...state, 
         userSelected: action.payload,
+      }
+    case 'Set User View':
+      return {
+          ...state,
+          userView: action.payload,
+    }
+    case 'Set User Selected Deleted':
+      return {
+          ...state,
+          userSelectedDelete: action.payload,
       }
     default:
       return state;
@@ -109,6 +130,24 @@ const UsersProvider: FC<Props> = ({ children }) => {
     });
   }
 
+  function setUserView (user: User | null) {
+    console.log(user);
+    
+    dispatch({
+      type: "Set User View",
+      payload: user,
+    });
+  }
+
+  function setUserDelected (user: User | null) {
+    console.log("usuario:", user);
+    dispatch({
+        type: 'Set User Selected Deleted',
+        payload: user,
+    });
+
+  }
+
   /**
    * Actualiza el registro en la lista de users y cierra el modal de editar
    * @param user Usuario actualizado 
@@ -131,6 +170,26 @@ const UsersProvider: FC<Props> = ({ children }) => {
     setUserSelected(null);
   }
 
+
+  function onDeleteUser(user: User) {
+    const usersCloneDelete = [...state.users];
+    const index = usersCloneDelete.findIndex((item) => item.id === user.id);
+  
+    if (index !== -1) {
+      usersCloneDelete.splice(index, 1);
+      dispatch({
+        type: 'Set Data',
+        payload: {
+          users: usersCloneDelete,
+        },
+      });
+    }
+    
+    // Cierra el modal u realiza cualquier otra acción necesaria
+    // (puedes manejar esto según tus necesidades)
+    setUserSelected(null);
+  }
+
   //retornar la estructura del provider
   return (
     <UsersContext.Provider
@@ -138,7 +197,10 @@ const UsersProvider: FC<Props> = ({ children }) => {
         ...state,
         getUsers,
         setUserSelected,
+        setUserDelected,
         onUpdatedUser,
+        onDeleteUser,
+        setUserView,
       }}
     >
       {children}
