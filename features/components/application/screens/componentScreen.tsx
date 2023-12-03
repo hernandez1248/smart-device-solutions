@@ -6,6 +6,53 @@ import ComponentCard from './components/componentCard';
 import { ComponentsProvider, useComponentsState } from '../providers/componentsProvider';
 import AddComponent from './components/addComponent';
 import EditComponent from './components/editComponent';
+import backendConfig from "../../../../config/backend/config";
+import DeleteComponent from './components/deleteComponent';
+import ViewComponent from './components/viewComponent';
+
+
+// import * as Location from 'expo-location';
+// import * as Contacts from 'expo-contacts';
+// // import NetInfo from '@react-native-community/netinfo';
+
+
+//   // Función para verificar la conexión a Internet
+//   const obtenerDatosDesdeServidor = async () => {
+//     try {
+//       const response = await fetch(`${backendConfig.url}/api/components`);
+//       const datos = await response.json();
+//       console.log('Datos obtenidos:', datos);
+//     } catch (error) {
+//       console.error('Error al obtener datos:', error);
+//     }
+//   };
+
+
+// async function obtenerUbicacion() {
+//   let { status } = await Location.requestForegroundPermissionsAsync();
+  
+//   if (status === 'granted') {
+//     let ubicacion = await Location.getCurrentPositionAsync({});
+//     console.log('Ubicación:', ubicacion);
+//     // Realizar acciones con la ubicación
+//   } else {
+//     console.log('Permiso de ubicación denegado');
+//     // Realizar acciones cuando se deniega el permiso
+//   }
+// }
+// // Función para obtener los contactos
+// async function obtenerContactos() {
+//   const { status } = await Contacts.requestPermissionsAsync();
+
+//   if (status === 'granted') {
+//     const { data } = await Contacts.getContactsAsync({});
+//     console.log('Contactos:', data);
+//     // Realizar acciones con la lista de contactos obtenida, como actualizar el estado del componente, etc.
+//   } else {
+//     console.log('Permiso de contactos denegado');
+//     // Realizar acciones cuando se deniega el permiso
+//   }
+// }
 
 function ComponentsScreenView() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -18,10 +65,16 @@ function ComponentsScreenView() {
     loading,
     components,
     componentSelected,
+    componentSelectedDelete, 
+    componentView,
 
     getComponents,
     setComponentSelected,
-    onUpdateComponent,
+    setComponentDelected,
+    setComponentView,
+    onUpdatedComponent,
+    onSavedComponent,
+    onDeleteComponent,
   } = useComponentsState();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -33,6 +86,9 @@ function ComponentsScreenView() {
 
   useEffect(() => {
     getComponents();
+    // obtenerUbicacion();
+    // obtenerContactos();
+    // obtenerDatosDesdeServidor();
   }, []);
 
   const renderCards = () => {
@@ -51,6 +107,8 @@ function ComponentsScreenView() {
         key={component.id} 
         component={component}
         onEdit={setComponentSelected}
+        onView={setComponentView}
+        onDelete={setComponentDelected}
       />)
     );
   };
@@ -99,16 +157,41 @@ function ComponentsScreenView() {
         iconColor="#ffffff" 
         size={30}
       />
-      <AddComponent modalVisible={modalVisible} setModalVisible={setModalVisible} />
-      
+  
       {!!componentSelected ? (
         <EditComponent 
           componentEdit={componentSelected}
           modalVisible={!!componentSelected}
-          onSaved={onUpdateComponent}
+          onSaved={onUpdatedComponent}
           onCancelEdit={setComponentSelected}
         />
       ) : null }
+
+      <AddComponent 
+        modalVisible={modalVisible} 
+        setModalVisible={setModalVisible} 
+        onSaved = {onSavedComponent}
+      />
+      
+      {!!componentSelectedDelete ? (
+      <DeleteComponent 
+        componentDelete={componentSelectedDelete} 
+        modalVisible={!!componentSelectedDelete} 
+        onDeleted={onDeleteComponent} 
+        onCancelDelete={setComponentDelected}
+      />
+      ) : null}
+
+      {!!componentView ? (
+        <ViewComponent
+          componentEdit={componentView}
+          modalVisible={!!componentView}
+          onSaved={onUpdatedComponent}
+          onCancelEdit={setComponentView}
+        />
+      ): null}
+
+
 
     </View>
   );

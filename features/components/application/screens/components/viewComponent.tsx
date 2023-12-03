@@ -4,14 +4,14 @@ import { EditComponentProvider, useEditComponentState } from "../../providers/ed
 import Component from "../../../domain/entities/component";
 
 
-interface EditComponentViewProps {
+interface ViewComponentViewProps {
   componentEdit: Component,
   onSaved: Function,
   modalVisible: boolean;
   onCancelEdit: Function;
 }
 
-const EditComponentView: React.FC<EditComponentViewProps> = ({
+const EditComponentView: React.FC<ViewComponentViewProps> = ({
   componentEdit,
   onSaved,
   modalVisible,
@@ -36,18 +36,6 @@ const EditComponentView: React.FC<EditComponentViewProps> = ({
     setComponent(componentEdit)
   }, [componentEdit]);
 
-  // const handleSaveComponent = async () => {
-  //   saveComponent(() => {
-  //       // Retrasa la aparición de la alerta
-  //       setTimeout(() => {
-  //           Alert.alert('Componente Actualizado', 'El Componente se actualizo correctamente', [
-  //               { text: 'OK', onPress: () => { } },
-  //           ]);
-  //       }, 500); // Puedes ajustar el tiempo de retardo según tus necesidades
-
-  //       onSaved()
-  //   })
-  // };
 
   return (
     <View style={styles.centeredView}>
@@ -61,12 +49,13 @@ const EditComponentView: React.FC<EditComponentViewProps> = ({
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.title}>Editar Componente</Text>
+            <Text style={styles.title}>Detalles del Componente</Text>
             <View>
               {/* <Text style={success ? styles.success : styles.alert}>{message}</Text> */}
 
               <Text style={styles.label}>Nombre:</Text>
-              <TextInput
+              <Text style={styles.labelNormal}>{component.name}</Text>
+              {/* <TextInput
                 style={[styles.textInput, (errors?.name ? styles.textError : null)]}
                 placeholder=" Ingresa el nombre"
                 value={component?.name || ""}
@@ -74,7 +63,7 @@ const EditComponentView: React.FC<EditComponentViewProps> = ({
                   setComponentProp("name", text);
                 }}
                 textContentType="name"
-              ></TextInput>
+              ></TextInput> */}
                 {errors?.name ? (
                 <Text style={styles.textError}>{errors.name}</Text>
               ) : null }
@@ -96,7 +85,9 @@ const EditComponentView: React.FC<EditComponentViewProps> = ({
             </View> */}
             <View>
               <Text style={styles.label}>Precio:</Text>
-              <TextInput
+              <Text style={styles.labelNormal}>{component.price}</Text>
+
+              {/* <TextInput
                 style={[styles.textInput, (errors?.price ? styles.textError : null)]}
                 placeholder=" Ingresa el precio"
                 value={component?.price?.toString() || ""}
@@ -104,14 +95,16 @@ const EditComponentView: React.FC<EditComponentViewProps> = ({
                   setComponentProp("price", text);
                 }}
                 textContentType="name"
-              ></TextInput>
+              ></TextInput> */}
               {errors?.price ? (
                 <Text style={styles.textError}>{errors.price}</Text>
               ) : null }
             </View>
             <View>
               <Text style={styles.label}>Cantidad:</Text>
-              <TextInput
+              <Text style={styles.labelNormal}>{component.stock}</Text>
+
+              {/* <TextInput
                 style={[styles.textInput, (errors?.stock ? styles.textError : null)]}
                 placeholder=" Ingresa el stock actual"
                 value={component.stock?.toString() || ""}
@@ -119,14 +112,16 @@ const EditComponentView: React.FC<EditComponentViewProps> = ({
                   setComponentProp("stock", text);
                 }}
                 textContentType="name"
-              ></TextInput>
+              ></TextInput> */}
               {errors?.stock ? (
                 <Text style={styles.textError}>{errors.stock}</Text>
               ) : null }
             </View>
             <View>
-              <Text style={styles.label}>Dispositivo al que pertenece:</Text>
-              <TextInput
+              {/* <Text style={styles.label}>Dispositivo al que pertenece:</Text>
+              <Text style={styles.labelNormal}>{component.deviceId}</Text> */}
+
+              {/* <TextInput
                 style={[styles.textInput, (errors?.deviceId ? styles.textError : null)]}
                 placeholder=" Ingresa el dispositivo"
                 value={component?.deviceId?.toString() || ""}
@@ -134,7 +129,7 @@ const EditComponentView: React.FC<EditComponentViewProps> = ({
                   setComponentProp("deviceId", parseFloat(text));
                 }}
                 textContentType="name"
-              />
+              /> */}
               {errors?.deviceId ? (
                 <Text style={styles.textError}>{errors.deviceId}</Text>
               ) : null }
@@ -148,22 +143,22 @@ const EditComponentView: React.FC<EditComponentViewProps> = ({
                   onCancelEdit(null)
                 }}
               >
-                <Text style={styles.textStyle}>Cancelar</Text>
+                <Text style={styles.textStyle}>Cerrar</Text>
               </Pressable>
               
-              <Pressable
+              {/* <Pressable
                 style={[styles.button, styles.buttonSaving]}
                 onPress={() => {
                   saveComponent(onSaved);
                   setTimeout(() => {
-                    Alert.alert('Componente Actualizado', 'El componente ha sido actualizado.', [
+                    Alert.alert('Usuario Actualizado', 'El usuario ha sido actualizado.', [
                       { text: 'OK', onPress: () => {} },
                     ]);
                   }, 500);
                 }}
               >
-                <Text style={styles.textStyle}>Guardar</Text>
-              </Pressable>
+                <Text style={styles.textStyle}>Actualizar</Text>
+              </Pressable> */}
             </View>
           </View>
         </View>
@@ -172,7 +167,7 @@ const EditComponentView: React.FC<EditComponentViewProps> = ({
   );
 };
 
-const EditComponent = (props: EditComponentViewProps) => (
+const ViewComponent = (props: ViewComponentViewProps) => (
   <EditComponentProvider>
     <EditComponentView {...props} />
   </EditComponentProvider>
@@ -240,6 +235,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     margin: 5,
   },
+  labelNormal: {
+    fontSize: 16,
+    margin: 5,
+  },
   alert: {
     backgroundColor: 'green',
     color: '#fff'
@@ -258,4 +257,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditComponent;
+export default ViewComponent;

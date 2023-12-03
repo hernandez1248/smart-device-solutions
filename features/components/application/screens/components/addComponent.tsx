@@ -5,11 +5,13 @@ import { AddComponentProvider, useAddComponentState } from "../../providers/addC
 interface AddComponentViewProps {
   modalVisible: boolean;
   setModalVisible: (visible: boolean) => void;
+  onSaved: Function;
 }
 
 const AddComponentView: React.FC<AddComponentViewProps> = ({
   modalVisible,
   setModalVisible,
+  onSaved,
 }) => {
   const {
     message,
@@ -35,7 +37,7 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
           { text: 'OK', onPress: () => {} },
         ]);
       }, 500); // Puedes ajustar el tiempo de retardo según tus necesidades
-   
+    // onSaved()
   };
 
   return (
@@ -68,6 +70,23 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
                 <Text style={styles.textError}>{errors.name}</Text>
               ) : null }
             </View>
+
+            <View>
+              <Text style={styles.label}>Imagen:</Text>
+              <TextInput
+                style={[styles.textInput, (errors?.image ? styles.textError : null)]}
+                placeholder=" Ingresa la URL de la imagen"
+                value={component?.image || ""}
+                onChangeText={(text) => {
+                  setComponentProp("image", text);
+                }}
+                textContentType="name"
+              ></TextInput>
+              {errors?.phone ? (
+                <Text style={styles.textError}>{errors.image}</Text>
+              ) : null }
+            </View>
+
             <View>
               <Text style={styles.label}>Precio:</Text>
               <TextInput

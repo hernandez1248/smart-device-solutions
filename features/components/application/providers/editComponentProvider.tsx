@@ -57,6 +57,7 @@ type EditComponentActionType =
         '',
         '',
         '',
+        '',
         undefined,
         ),
         errors: {

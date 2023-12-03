@@ -6,6 +6,24 @@ import backendConfig from "../../../../config/backend/config";
 
 class ComponentsDatasourceImp extends ComponentsDatasource {
 
+  async deleteComponent(component: Component): Promise<AddComponentResult> {
+    return fetch(`${backendConfig.url}/api/components?id=${component.id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => response.json())
+    .then((response) => {
+      console.log(response);
+      const result = new AddComponentResult(response.message, response.component || null);
+      result.errors = response.errors || null;
+      result.error = response.error || false;
+
+      return result;
+    });
+  }
+
   async addComponent(component: Component): Promise<AddComponentResult> {
       // console.log(component);
       
@@ -39,6 +57,7 @@ class ComponentsDatasourceImp extends ComponentsDatasource {
 
         const components = response.map((item : any) => new Component(
             item.name,
+            // item.image,
             item.price,
             item.stock,
             item.deviceId,

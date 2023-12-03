@@ -4,7 +4,8 @@ import ComponentsResult from "../entities/componentsResult";
 
 abstract class ComponentsDatasource {
     abstract getComponents(): Promise<ComponentsResult>;
-    abstract addComponent(component: Component): Promise<AddComponentResult> 
+    abstract addComponent(component: Component): Promise<AddComponentResult>
+    abstract deleteComponent(component: Component): Promise<AddComponentResult>
 
 }
 

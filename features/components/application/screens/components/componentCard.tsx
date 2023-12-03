@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import Component from '../../../domain/entities/component';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -7,11 +7,15 @@ import { FontAwesome5 } from '@expo/vector-icons';
 type CardProps = {
   component: Component,
   onEdit?: Function,
+  onDelete?: Function,
+  onView?: Function,
 };
 
 const ComponentCard: React.FC<CardProps> = ({
   component,
   onEdit,
+  onDelete,
+  onView,
 
 }) => {
   const [menuVisible, setMenuVisible] = useState(false);
@@ -26,17 +30,40 @@ const ComponentCard: React.FC<CardProps> = ({
     // setComponentToEdit(component);
     // setModalUpdateVisible(true);
 
-    setMenuVisible(!menuVisible);
-
+    // setMenuVisible(!menuVisible);
+    toggleMenu();
     if(onEdit){
       onEdit(component);
     }
   };
 
+  const handleView = () => {
+    /*  setUserToEdit(user)
+     setModalUpdateVisible(true); */
+     
+     toggleMenu();
+     if (onView) {
+       onView(component);
+     }
+   };
+ 
+
+  const handleDelete = () => {
+    if(onDelete){      
+       onDelete(component);
+    }
+  }
+
 
   return (
     <View>
       <View style={styles.row}>
+        <View style={{ borderRadius: 15, overflow: 'hidden' }}>
+          <Image
+            source={{ uri: `${component.image}` }}
+            style={{ width: 35, height: 35 }}
+          />
+        </View>
         <Text style={styles.column}>
           {component.name}
         </Text>
@@ -77,6 +104,7 @@ const ComponentCard: React.FC<CardProps> = ({
               onPress={() => {
                 // Acción al presionar "Ver"
                 toggleMenu();
+                handleView();
               }}
             >
               <View style={styles.menuView}>
@@ -84,6 +112,7 @@ const ComponentCard: React.FC<CardProps> = ({
                 <Text style={styles.menuText}>Ver</Text>
               </View>
             </TouchableOpacity>
+
             <TouchableOpacity
               style={styles.menuItem}
               onPress={handleEdit}
@@ -93,11 +122,13 @@ const ComponentCard: React.FC<CardProps> = ({
                 <Text style={styles.menuText}>Editar</Text>
               </View>
             </TouchableOpacity>
+
             <TouchableOpacity
               style={styles.menuItem}
               onPress={() => {
                 // Acción al presionar "Eliminar"
                 toggleMenu();
+                handleDelete();
               }}
             >
               <View style={styles.menuView}>

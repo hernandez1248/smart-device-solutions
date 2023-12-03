@@ -10,11 +10,18 @@ interface ContextDefinition {
     loading: boolean;
     components: Component[];
     componentSelected: Component | null;
+    componentView: Component | null,
+    componentSelectedDelete: Component | null;
 
     //acciones que tendra mi context
     getComponents: () => void;
     setComponentSelected: (component: Component | null) => void;
-    onUpdateComponent: (component: Component) => void;
+    setComponentDelected: (component: Component | null) => void;
+    setComponentView: (component: Component | null) => void;
+
+    onSavedComponent: (newComponent: Component) => void;
+    onUpdatedComponent: (component: Component) => void;
+    onDeleteComponent: (component: Component) => void;
 }
 
 //crear el objeto context de react
@@ -29,6 +36,8 @@ interface ComponentsState {
     loading: boolean;
     components: Component[];
     componentSelected: Component | null;
+    componentView: Component | null,
+    componentSelectedDelete: Component | null;
 
 }
 
@@ -37,6 +46,8 @@ type ComponentsActionType =
 { type: 'Set Loading', payload: boolean }
 | { type: 'Set Data', payload: ComponentsResult }
 | { type: 'Set Component Selected', payload: Component | null }
+| { type: "Set Component View"; payload: Component | null }
+| {type: 'Set Component Selected Deleted', payload: Component | null};
 
 ;
 
@@ -45,6 +56,8 @@ const initialState : ComponentsState = {
     loading: false,
     components: [],
     componentSelected: null,
+    componentSelectedDelete: null,
+    componentView: null,
 }
 //definicion del reducer
 //se encargara de manipular el state con base en
@@ -68,6 +81,16 @@ function componentsReducer( state: ComponentsState, action: ComponentsActionType
             return {
                 ...state,
                 componentSelected: action.payload,
+            }
+        case 'Set Component View':
+            return {
+                ...state,
+                componentView: action.payload,
+            }
+        case 'Set Component Selected Deleted':
+            return {
+                ...state,
+                componentSelectedDelete: action.payload,
             }
         
             default:
@@ -113,11 +136,29 @@ function componentsReducer( state: ComponentsState, action: ComponentsActionType
             });
         }
 
+        function setComponentView (component: Component | null) {
+            console.log(component);
+            
+            dispatch({
+              type: "Set Component View",
+              payload: component,
+            });
+        }
+        
+        function setComponentDelected (component: Component | null) {
+            console.log("componente:", component);
+            dispatch({
+                type: 'Set Component Selected Deleted',
+                payload: component,
+            });
+        
+        }
+
         /**
          * actualiza el registro en la lista de componentes y cierra el modal de editar
          * @param component Componente actualizado
          */
-        function onUpdateComponent (component: Component) {
+        function onUpdatedComponent (component: Component) {
             //buscar el resgistro en components, y remplazarlo
             //actualiza el estado components
             const componentsClone = [...state.components];
@@ -136,13 +177,56 @@ function componentsReducer( state: ComponentsState, action: ComponentsActionType
             setComponentSelected(null);
         }
 
+        async function onSavedComponent(){
+            const repository = new ComponentsRepositoryImp(
+                new ComponentsDatasourceImp()
+            );
+    
+            //cambiar el state a loading
+            dispatch({
+                type: 'Set Loading',
+                payload: true,
+            });
+    
+            const dateOn = await repository.getComponents();
+    
+            dispatch({
+                type: 'Set Data',
+                payload: dateOn,
+            });
+        };
+
+        function onDeleteComponent(component: Component) {
+            const componentsCloneDelete = [...state.components];
+            const index = componentsCloneDelete.findIndex((item) => item.id === component.id);
+          
+            if (index !== -1) {
+              componentsCloneDelete.splice(index, 1);
+              dispatch({
+                type: 'Set Data',
+                payload: {
+                  components: componentsCloneDelete,
+                },
+              });
+            }
+            
+            // Cierra el modal u realiza cualquier otra acción necesaria
+            // (puedes manejar esto según tus necesidades)
+            setComponentSelected(null);
+        }
+
         //retornar la estructura del provider
         return(
             <ComponentsContext.Provider value = {{
                 ...state,
                 getComponents,
                 setComponentSelected,
-                onUpdateComponent,
+                setComponentDelected,
+                setComponentView,
+                onUpdatedComponent,
+                onSavedComponent,
+                onDeleteComponent,
+
             }}>
             {children}
             </ComponentsContext.Provider>

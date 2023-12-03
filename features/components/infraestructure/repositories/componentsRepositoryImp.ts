@@ -11,6 +11,11 @@ import ComponentsRepository from "../../domain/repositories/componentsRepository
         super();
         this.datasource = datasource;
     } 
+
+    deleteComponent(component: Component): Promise<AddComponentResult> {
+        return this.datasource.deleteComponent(component);
+    }
+
     addComponent(component: Component): Promise<AddComponentResult> {
         return this.datasource.addComponent(component);
     }
