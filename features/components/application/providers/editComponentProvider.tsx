@@ -14,12 +14,13 @@ interface ContextDefinition {
     //Acciones que tendra mi context
     setComponentProp: (property: string, value: any) => void;
     saveComponent: (onSaved: Function)=> void,
+    setComponent: (component: Component)=> void,
 }
 
  //crear el objeto context de react
-const AddComponentContext = createContext({} as ContextDefinition);
+const EditComponentContext = createContext({} as ContextDefinition);
 
- interface AddComponentState {
+ interface EditComponentState {
     loading: boolean,
     saving: boolean,
     success: boolean,
@@ -30,7 +31,7 @@ const AddComponentContext = createContext({} as ContextDefinition);
  }
 
 //definir los tipos de acciones que podra ejecutar el context / providers
-type AddComponentActionType = 
+type EditComponentActionType = 
     {type: 'Set Loading', payload: boolean} 
     | {type: 'Set Saving', payload: boolean}
     | { type: "Set Success", payload: { 
@@ -43,10 +44,10 @@ type AddComponentActionType =
     | { type: "Set Errors", payload: {
         message: string,
         errors: any
-}}
+    }}
 
  //inicializar el state
- const initialState : AddComponentState = {
+ const initialState : EditComponentState = {
     loading: false,
     saving: false,
     success: false,
@@ -57,17 +58,17 @@ type AddComponentActionType =
         '',
         '',
         undefined,
-    ),
-    errors: {
-    },
+        ),
+        errors: {
+        },
 }
 
  //definicion del reducer
  //se encargara de manipular el state con base en
  //las acciones y datos recibidos (payload)m
- function addComponentReducer( 
-        state: AddComponentState, 
-        action: AddComponentActionType
+ function editComponentReducer( 
+        state: EditComponentState, 
+        action: EditComponentActionType
     ){
     switch (action.type) {
         //manipular el estado con base a las acciones
@@ -118,8 +119,8 @@ type Props = {
 }
 
 //implementar el proveedor de estado para components
-const AddComponentProvider: FC<Props> = ({children}) => {
-    const [state, dispatch] = useReducer( addComponentReducer, initialState );
+const EditComponentProvider: FC<Props> = ({children}) => {
+    const [state, dispatch] = useReducer( editComponentReducer, initialState );
 
     function setComponentProp(property: string, value: any) {
         //mandar el valor al estado component
@@ -141,6 +142,8 @@ const AddComponentProvider: FC<Props> = ({children}) => {
             type: 'Set Saving',
             payload: true,
         })
+        console.log(state.component);
+        
 
         const result = await componentsRepository.addComponent(state.component);
         if (result.component) {
@@ -157,9 +160,9 @@ const AddComponentProvider: FC<Props> = ({children}) => {
         //     onSaved(false);
         //   }
         //   console.log(result);
-
+        
+        //si ya se guardo mandar a cerrar el modal
         onSaved(state.component);
-
         return;
         }
         // dispatch({
@@ -190,20 +193,32 @@ const AddComponentProvider: FC<Props> = ({children}) => {
         // type: 'Set Saving',
         // payload: false,
         // });
+    
+        //test para guardar, //quitar de aca
+        
+        // onSaved(state.component);
+    }
+
+    function setComponent(component: Component){
+        dispatch({
+            type: 'Set Component',
+            payload: component,
+        });
     }
 
 
     //retornar la estructura del provider
     return(
-    <AddComponentContext.Provider value = {{
+    <EditComponentContext.Provider value = {{
         ...state,
         
         //funciones
         setComponentProp,
         saveComponent,
+        setComponent,
     }}>
     {children}
-    </AddComponentContext.Provider>
+    </EditComponentContext.Provider>
 )
 }
 
@@ -211,14 +226,14 @@ const AddComponentProvider: FC<Props> = ({children}) => {
  //para usar el provider y el state
  //lo ideal es generar una funcion hook
  
- function useAddComponentState() {
-    const context = useContext(AddComponentContext);
+ function useEditComponentState() {
+    const context = useContext(EditComponentContext);
     if(context === undefined) {
-        throw new Error("useAddComponentState debe ser usado " +
-        " con un AddComponentProvider");
+        throw new Error("useEditComponentState debe ser usado " +
+        " con un EditComponentProvider");
     }
     return context;
 }
 
 
-export {AddComponentProvider, useAddComponentState}
+export {EditComponentProvider, useEditComponentState}

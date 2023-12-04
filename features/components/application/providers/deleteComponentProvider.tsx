@@ -13,13 +13,14 @@ interface ContextDefinition {
 
     //Acciones que tendra mi context
     setComponentProp: (property: string, value: any) => void;
-    saveComponent: (onSaved: Function)=> void,
+    deleteComponent: (onDeleted: Function) => void,
+    setComponent: (component: Component)=> void,
 }
 
  //crear el objeto context de react
-const AddComponentContext = createContext({} as ContextDefinition);
+const DeleteComponentContext = createContext({} as ContextDefinition);
 
- interface AddComponentState {
+ interface DeleteComponentState {
     loading: boolean,
     saving: boolean,
     success: boolean,
@@ -30,7 +31,7 @@ const AddComponentContext = createContext({} as ContextDefinition);
  }
 
 //definir los tipos de acciones que podra ejecutar el context / providers
-type AddComponentActionType = 
+type DeleteComponentActionType = 
     {type: 'Set Loading', payload: boolean} 
     | {type: 'Set Saving', payload: boolean}
     | { type: "Set Success", payload: { 
@@ -43,10 +44,10 @@ type AddComponentActionType =
     | { type: "Set Errors", payload: {
         message: string,
         errors: any
-}}
+    }}
 
  //inicializar el state
- const initialState : AddComponentState = {
+ const initialState : DeleteComponentState = {
     loading: false,
     saving: false,
     success: false,
@@ -57,17 +58,17 @@ type AddComponentActionType =
         '',
         '',
         undefined,
-    ),
-    errors: {
-    },
+        ),
+        errors: {
+        },
 }
 
  //definicion del reducer
  //se encargara de manipular el state con base en
  //las acciones y datos recibidos (payload)m
- function addComponentReducer( 
-        state: AddComponentState, 
-        action: AddComponentActionType
+ function DeleteComponentReducer( 
+        state: DeleteComponentState, 
+        action: DeleteComponentActionType
     ){
     switch (action.type) {
         //manipular el estado con base a las acciones
@@ -91,23 +92,23 @@ type AddComponentActionType =
                 ...state,
                 component: action.payload,
             }
-            case 'Set Errors':
-                return {
-                  ...state,
-                  errors: action.payload.errors || {},
-                  message: action.payload.message,
-                  saving: false,
-                }
-              case "Set Success":
-                return {
-                  ...state,
-                  success: action.payload.success,
-                  message: action.payload.message,
-                  errors: {},
-                  saving: false,
-                  // user: action.payload.user || state.user,
-                  
-                }
+        case 'Set Errors':
+            return {
+                ...state,
+                errors: action.payload.errors || {},
+                message: action.payload.message,
+                saving: false,
+            }
+        case "Set Success":
+            return {
+                ...state,
+                success: action.payload.success,
+                message: action.payload.message,
+                errors: {},
+                saving: false,
+                // user: action.payload.user || state.user,
+                
+            }
         default:
             return state;
     }
@@ -118,8 +119,8 @@ type Props = {
 }
 
 //implementar el proveedor de estado para components
-const AddComponentProvider: FC<Props> = ({children}) => {
-    const [state, dispatch] = useReducer( addComponentReducer, initialState );
+const DeleteComponentProvider: FC<Props> = ({children}) => {
+    const [state, dispatch] = useReducer( DeleteComponentReducer, initialState );
 
     function setComponentProp(property: string, value: any) {
         //mandar el valor al estado component
@@ -132,8 +133,10 @@ const AddComponentProvider: FC<Props> = ({children}) => {
         });
     }
 
-    async function saveComponent(onSaved: Function) {
-        const componentsRepository = new ComponentsRepositoryImp(
+    
+
+    async function deleteComponent(onDeleted: Function) {
+        const ComponentsRepository = new ComponentsRepositoryImp(
             new ComponentsDatasourceImp()
         )
         //enviar los datos al backend a traves del repositorio
@@ -141,8 +144,12 @@ const AddComponentProvider: FC<Props> = ({children}) => {
             type: 'Set Saving',
             payload: true,
         })
+        onDeleted(null);
 
-        const result = await componentsRepository.addComponent(state.component);
+        console.log(state.component);
+        
+
+        const result = await ComponentsRepository.deleteComponent(state.component);
         if (result.component) {
         dispatch({
             type: 'Set Success',
@@ -153,14 +160,8 @@ const AddComponentProvider: FC<Props> = ({children}) => {
             },
         });
 
-        // if (onSaved) {
-        //     onSaved(false);
-        //   }
-        //   console.log(result);
-
-        onSaved(state.component);
-
-        return;
+        onDeleted(state.component);
+            return;
         }
         // dispatch({
         //   type: 'Set Message',
@@ -170,55 +171,56 @@ const AddComponentProvider: FC<Props> = ({children}) => {
         let errors : any = {};
         
         result.errors?.forEach((item) => {
-        errors[item.field] = item.error;
+            errors[item.field] = item.error;
         });
         // console.log(result.errors);
         
-
         dispatch({
-        type: 'Set Errors',
-        payload: {
-            message: result.message,
-            errors,
-        },
+            type: 'Set Errors',
+            payload: {
+                message: result.message,
+                errors,
+            },
         });
-        // console.log(errors);
-        
 
-        // console.log(result);
-        // dispatch({
-        // type: 'Set Saving',
-        // payload: false,
-        // });
+    }
+
+    function setComponent(component: Component){
+        dispatch({
+            type: 'Set Component',
+            payload: component,
+        });
     }
 
 
     //retornar la estructura del provider
     return(
-    <AddComponentContext.Provider value = {{
-        ...state,
-        
-        //funciones
-        setComponentProp,
-        saveComponent,
-    }}>
-    {children}
-    </AddComponentContext.Provider>
-)
+        <DeleteComponentContext.Provider value = {{
+            ...state,
+            
+            //funciones
+            setComponentProp,
+            deleteComponent,
+            setComponent,
+            }}
+        >
+            {children}
+        </DeleteComponentContext.Provider>
+    );
 }
 
  
  //para usar el provider y el state
  //lo ideal es generar una funcion hook
  
- function useAddComponentState() {
-    const context = useContext(AddComponentContext);
+ function useDeleteComponentState() {
+    const context = useContext(DeleteComponentContext);
     if(context === undefined) {
-        throw new Error("useAddComponentState debe ser usado " +
-        " con un AddComponentProvider");
+        throw new Error("useDeleteComponentState debe ser usado " +
+        " con un DeleteComponentProvider");
     }
     return context;
 }
 
 
-export {AddComponentProvider, useAddComponentState}
+export {DeleteComponentProvider, useDeleteComponentState}

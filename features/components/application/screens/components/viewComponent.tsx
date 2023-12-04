@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { View, Modal, Text, TextInput, StyleSheet, Pressable, Dimensions, Alert } from "react-native";
-import { AddComponentProvider, useAddComponentState } from "../../providers/addComponentProvider";
+import { EditComponentProvider, useEditComponentState } from "../../providers/editComponentProvider";
+import Component from "../../../domain/entities/component";
 
-interface AddComponentViewProps {
+
+interface ViewComponentViewProps {
+  componentEdit: Component,
+  onSaved: Function,
   modalVisible: boolean;
-  setModalVisible: (visible: boolean) => void;
-  onSaved: Function;
+  onCancelEdit: Function;
 }
 
-const AddComponentView: React.FC<AddComponentViewProps> = ({
-  modalVisible,
-  setModalVisible,
+const EditComponentView: React.FC<ViewComponentViewProps> = ({
+  componentEdit,
   onSaved,
+  modalVisible,
+  onCancelEdit,
 }) => {
-
   const {
     message,
     loading,
@@ -22,31 +25,17 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
     component,
     errors,
 
+    
     setComponentProp,
-    saveComponent
-  } = useAddComponentState();
+    saveComponent,
+    setComponent,
+  } = useEditComponentState();
 
-
-  const { devices, getDevices } = useDevicesState();
-
+  //al recibir el usuario a editar, pasarlo al proveedor de estado
   useEffect(() => {
-    getDevices();
-  }, []);
+    setComponent(componentEdit)
+  }, [componentEdit]);
 
-  const handleSaveComponent = () => {
-    saveComponent(() => {
-      setModalVisible(false); // Cierra el modal primero
-
-
-      // Retrasa la aparición de la alerta
-      setTimeout(() => {
-        Alert.alert('Componente Registrado', 'El Componente se ha registrado correctamente', [
-          { text: 'OK', onPress: () => { } },
-        ]);
-      }, 500); // Puedes ajustar el tiempo de retardo según tus necesidades
-
-    // onSaved()
-  };
 
   return (
     <View style={styles.centeredView}>
@@ -55,17 +44,18 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
-          setModalVisible(false);
+          onCancelEdit(null);
         }}
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.title}>Registrar Componente</Text>
+            <Text style={styles.title}>Detalles del Componente</Text>
             <View>
               {/* <Text style={success ? styles.success : styles.alert}>{message}</Text> */}
 
               <Text style={styles.label}>Nombre:</Text>
-              <TextInput
+              <Text style={styles.labelNormal}>{component.name}</Text>
+              {/* <TextInput
                 style={[styles.textInput, (errors?.name ? styles.textError : null)]}
                 placeholder=" Ingresa el nombre"
                 value={component?.name || ""}
@@ -73,12 +63,11 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
                   setComponentProp("name", text);
                 }}
                 textContentType="name"
-              ></TextInput>
-              {errors?.name ? (
+              ></TextInput> */}
+                {errors?.name ? (
                 <Text style={styles.textError}>{errors.name}</Text>
-              ) : null}
+              ) : null }
             </View>
-
             {/* <View>
               <Text style={styles.label}>Imagen:</Text>
               <TextInput
@@ -90,14 +79,15 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
                 }}
                 textContentType="name"
               ></TextInput>
-              {errors?.phone ? (
+              {errors?.image ? (
                 <Text style={styles.textError}>{errors.image}</Text>
               ) : null }
             </View> */}
-
             <View>
               <Text style={styles.label}>Precio:</Text>
-              <TextInput
+              <Text style={styles.labelNormal}>{component.price}</Text>
+
+              {/* <TextInput
                 style={[styles.textInput, (errors?.price ? styles.textError : null)]}
                 placeholder=" Ingresa el precio"
                 value={component?.price?.toString() || ""}
@@ -105,15 +95,16 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
                   setComponentProp("price", text);
                 }}
                 textContentType="name"
-              ></TextInput>
+              ></TextInput> */}
               {errors?.price ? (
                 <Text style={styles.textError}>{errors.price}</Text>
-              ) : null}
+              ) : null }
             </View>
-
             <View>
               <Text style={styles.label}>Cantidad:</Text>
-              <TextInput
+              <Text style={styles.labelNormal}>{component.stock}</Text>
+
+              {/* <TextInput
                 style={[styles.textInput, (errors?.stock ? styles.textError : null)]}
                 placeholder=" Ingresa el stock actual"
                 value={component.stock?.toString() || ""}
@@ -121,60 +112,53 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
                   setComponentProp("stock", text);
                 }}
                 textContentType="name"
-              ></TextInput>
+              ></TextInput> */}
               {errors?.stock ? (
                 <Text style={styles.textError}>{errors.stock}</Text>
-              ) : null}
+              ) : null }
             </View>
-
-
-
-
-
             <View>
-              <Text style={styles.label}>Dispositivo al que pertenece:</Text>
-              <RNPickerSelect
-                onValueChange={(value) => setComponentProp("deviceId", value)}
-                items={[
-                  ...(devices && devices.length > 0
-                    ? devices.map((device) => ({
-                        label: 'Marca: '+device.brand+' Modelo: '+device.model,
-                        value: device.id,
-                      }))
-                    : []),
-                ]}
-                style={{
-                  inputIOS: styles.textInput,
-                  inputAndroid: styles.textInput,
+              {/* <Text style={styles.label}>Dispositivo al que pertenece:</Text>
+              <Text style={styles.labelNormal}>{component.deviceId}</Text> */}
+
+              {/* <TextInput
+                style={[styles.textInput, (errors?.deviceId ? styles.textError : null)]}
+                placeholder=" Ingresa el dispositivo"
+                value={component?.deviceId?.toString() || ""}
+                onChangeText={(text) => {
+                  setComponentProp("deviceId", parseFloat(text));
                 }}
-                value={component?.deviceId}
-                placeholder={{
-                  label: 'Elige un dispositivo',
-                  value: null,
-                }}
-              />
-              {errors?.deviceId ? <Text style={styles.textError}>{errors.deviceId}</Text> : null}
+                textContentType="name"
+              /> */}
+              {errors?.deviceId ? (
+                <Text style={styles.textError}>{errors.deviceId}</Text>
+              ) : null }
             </View>
-
-
-
-
 
             <View style={styles.buttonsContainer}>
-
+      
               <Pressable
                 style={[styles.button, styles.buttonClose]}
-                onPress={() => setModalVisible(false)}
+                onPress={() => {
+                  onCancelEdit(null)
+                }}
               >
-                <Text style={styles.textStyle}>Cancelar</Text>
+                <Text style={styles.textStyle}>Cerrar</Text>
               </Pressable>
-
-              <Pressable
+              
+              {/* <Pressable
                 style={[styles.button, styles.buttonSaving]}
-                onPress={handleSaveComponent}
+                onPress={() => {
+                  saveComponent(onSaved);
+                  setTimeout(() => {
+                    Alert.alert('Usuario Actualizado', 'El usuario ha sido actualizado.', [
+                      { text: 'OK', onPress: () => {} },
+                    ]);
+                  }, 500);
+                }}
               >
-                <Text style={styles.textStyle}>Registrar</Text>
-              </Pressable>
+                <Text style={styles.textStyle}>Actualizar</Text>
+              </Pressable> */}
             </View>
           </View>
         </View>
@@ -183,12 +167,10 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
   );
 };
 
-const AddComponent = (props: any) => (
-  <AddComponentProvider>
-    <DevicesProvider>
-    <AddComponentView {...props} />
-    </DevicesProvider>
-  </AddComponentProvider>
+const ViewComponent = (props: ViewComponentViewProps) => (
+  <EditComponentProvider>
+    <EditComponentView {...props} />
+  </EditComponentProvider>
 );
 
 const { width } = Dimensions.get("window"); // Obtiene el ancho de la pantalla
@@ -253,6 +235,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     margin: 5,
   },
+  labelNormal: {
+    fontSize: 16,
+    margin: 5,
+  },
   alert: {
     backgroundColor: 'green',
     color: '#fff'
@@ -271,4 +257,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddComponent;
+export default ViewComponent;

@@ -5,6 +5,7 @@ import ComponentsResult from "../entities/componentsResult";
 abstract class ComponentsRepository {
     abstract getComponents(): Promise<ComponentsResult>;
     abstract addComponent(component: Component): Promise<AddComponentResult>;
+    abstract deleteComponent(component: Component): Promise<AddComponentResult>;
 
 }
 
