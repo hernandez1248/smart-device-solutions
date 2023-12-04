@@ -7,9 +7,8 @@ import UsersResult from "../../domain/entities/usersResult";
 class UsersDatasourceImp extends UsersDatasource {
   
   async addUser(user: User): Promise<AddUsersResult> {
-    
     return fetch(`${backendConfig.url}/api/users`, {
-      method: "POST",
+      method: !user.id ? "POST" : "PUT",
       body: JSON.stringify(user),
       headers: {
         "Content-Type": "application/json",
@@ -23,7 +22,6 @@ class UsersDatasourceImp extends UsersDatasource {
       result.error = response.error || false;
       console.log(response);
       
-
       return result;
     });
   }
@@ -38,10 +36,11 @@ class UsersDatasourceImp extends UsersDatasource {
               item.name,
               item.lastName,
               item.phone,
+              item.image,
               item.email,
               item.rol,
-              item.password,
               item.id,
+              item.password,
             )
         );
 

@@ -1,7 +1,8 @@
 import { FC, ReactNode, createContext, useContext, useReducer } from "react";
-import User from "../../domain/entities/user";
-import UsersRepositoryImp from "../../infraestructure/repositories/usersRepositoryImp";
-import UsersDatasourceImp from "../../infraestructure/datasources/usersDatasourceImp";
+import State from "../../domain/entities/state";
+import StatesRepositoryImp from "../../infraestructure/repositories/statesRepositoryImp";
+import StatesDatasourceImp from "../../infraestructure/datasources/statesDatasourceImp";
+
 
 //definir la estructura que tendra mi context
 interface ContextDefinition {
@@ -10,102 +11,99 @@ interface ContextDefinition {
   saving: boolean,
   success: boolean,
   message?: string | null, 
-  user: User,
+  state: State,
   errors: any,
 
   // acciones que tendrá mi context
-  setUserProp: (property: string, value: any) => void,
-  saveUser: (onSaved: Function)=> void,
+  setStateProp: (property: string, value: any) => void,
+  saveState: (onSaved: Function)=> void,
 }
 
 //crear el objeto context de react
-const AddUserContext = createContext({} as ContextDefinition);
+const AddStateContext = createContext({} as ContextDefinition);
 
-interface AddUserState {
+interface AddStateState {
   //definición del estado
   loading: boolean;
   saving: boolean,
   success: boolean,
   message?: string | null,
-  user: User,
+  state: State,
   errors: any,
 }
 
 //definir los tipos de acciones que podra ejecutar el context / providers
-type AddUserActionType =
+type AddStateActionType =
   { type: "Set Loading"; payload: boolean }
   | { type: "Set Saving"; payload: boolean }
   | { type: "Set Success"; payload: { 
       success: boolean, 
-      user?: User,
+      state?: State,
       message: string,
     } }
-  | { type: "Set User"; payload: User }
+  | { type: "Set State"; payload: State }
   | { type: "Set Message"; payload: string | null }
   | { type: "Set Errors"; payload: {
       message: string,
       errors: any,
   } };
 
-//inicializar el state
-const initialState: AddUserState = {
+//inicializar el states
+const initialState: AddStateState = {
   loading: false,
   saving: false,
   success: false,
   message: null,
-  user: new User(
-    '', 
-    '', 
-    '', 
-    '',
+  state: new State(
+    undefined,
     '',
     '',
     undefined,
     ''
-    ),
+  ),
     errors: {},
 };
 
-function AddUserReducer(
-  state: AddUserState, 
-  action: AddUserActionType
+function AddStateReducer(
+  states: AddStateState, 
+  action: AddStateActionType
 ) {
   switch (action.type) {
     //manipular el estado con base a las acciones
     case "Set Message":
       return { 
-        ...state, 
+        ...states, 
         message: action.payload };
     case "Set Loading":
-      return { ...state, loading: action.payload };
+      return { ...states, loading: action.payload };
     case "Set Saving":
       return {
-        ...state,
+        ...states,
         saving: action.payload,
       }
-    case "Set User":
+    case "Set State":
       return {
-        ...state,
-        user: action.payload,
+        ...states,
+        state: action.payload,
       }
     case "Set Errors":
       return {
-        ...state,
+        ...states,
         errors: action.payload.errors || {},
         message: action.payload.message,
         saving: false,
       }
       case "Set Success":
       return {
-        ...state,
+        ...states,
         success: action.payload.success,
         message: action.payload.message,
         errors: {},
         saving: false,
-        //user: action.payload.user || state.user,
+        //state: action.payload.state || states.state,
       }
     default:
-      return state;
+      return states;
   }
 };
 
@@ -113,23 +111,24 @@ type Props = {
   children?: ReactNode;
 };
 
-const AddUserProvider:FC<Props> = ({ children }) => {
-  const [state, dispatch] = useReducer(AddUserReducer, initialState);
+const AddStateProvider:FC<Props> = ({ children }) => {
+  const [states, dispatch] = useReducer(AddStateReducer, initialState);
 
-  function setUserProp(property: string, value: any) {
-    // mandar el valor al estado user
+  function setStateProp(property: string, value: any) {
+    // mandar el valor al estado state
     dispatch({
-      type: 'Set User',
+      type: 'Set State',
       payload: {
-        ...state.user,
+        ...states.state,
         [property]: value,
       }
     });
   }
+  
 
-  async function saveUser(onSaved: Function) {
-    const usersRepository = new UsersRepositoryImp(
-      new UsersDatasourceImp
+  async function saveState(onSaved: Function) {
+    const StatesRepository = new StatesRepositoryImp(
+      new StatesDatasourceImp
     )
     // envir los datos al backend
     dispatch({
@@ -137,20 +136,24 @@ const AddUserProvider:FC<Props> = ({ children }) => {
       payload: true,
     });
     
-    const result = await usersRepository.addUser(state.user);
-    if(result.user) {
+    const result = await StatesRepository.addState(states.state);
+    if(result.state) {
       dispatch({
         type: 'Set Success',
         payload: {
           success: true,
-          user: result.user,
+          state: result.state,
           message: result.message,
         }
       });
+      /*
       if (onSaved) {
-        onSaved(false);
+      return onSaved(false);
+
       }
-      console.log(result);
+      console.log(result);*/
+      
+      onSaved(states.state);
 
 
       return;
@@ -174,27 +177,27 @@ const AddUserProvider:FC<Props> = ({ children }) => {
   }
 
   return (
-    <AddUserContext.Provider value={{
-        ...state,
+    <AddStateContext.Provider value={{
+        ...states,
         
         //funciones
-        setUserProp,
-        saveUser,
+        setStateProp,
+        saveState,
       }}
     >
       {children}
-    </AddUserContext.Provider>
+    </AddStateContext.Provider>
   );
 }
 
-function useAddUserState() {
-  const context = useContext(AddUserContext);
+function useAddStateState() {
+  const context = useContext(AddStateContext);
   if (context === undefined) {
-    throw new Error("useAddUserState debe ser usado " + " con un AddUserProvider");
+    throw new Error("useAddStateState debe ser usado " + " con un AddStateProvider");
   }
   return context;
 }
 
-export { AddUserProvider, useAddUserState };
+export { AddStateProvider, useAddStateState };
 
 

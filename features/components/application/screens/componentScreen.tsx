@@ -190,9 +190,6 @@ function ComponentsScreenView() {
           onCancelEdit={setComponentView}
         />
       ): null} */}
-
-
-
     </View>
   );
 }

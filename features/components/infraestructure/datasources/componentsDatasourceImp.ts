@@ -2,7 +2,6 @@ import ComponentsDatasource from "../../domain/datasources/componentsDatasource"
 import AddComponentResult from "../../domain/entities/addComponentResult";
 import Component from "../../domain/entities/component";
 import ComponentsResult from "../../domain/entities/componentsResult";
-import backendConfig from "../../../../config/backend/config";
 
 class ComponentsDatasourceImp extends ComponentsDatasource {
 

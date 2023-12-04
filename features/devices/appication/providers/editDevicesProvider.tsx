@@ -3,26 +3,26 @@ import Device from "../../domain/entities/device";
 import DevicesRepositoryImp from "../../infraestructure/repositories/devicesRepositoryImp";
 import DevicesDatasourceImp from "../../infraestructure/datasources/devicesDatasourceImp";
 
-
 //definir la estructura que tendra mi context
 interface ContextDefinition {
   //definición del estado
   loading: boolean;
   saving: boolean,
   success: boolean,
-  message?: string | null, 
+  message?: string | null,
   device: Device,
   errors: any,
 
   // acciones que tendrá mi context
   setDeviceProp: (property: string, value: any) => void,
-  saveDevice: (onSaved: Function)=> void,
+  saveDevice: (onSaved: Function) => void,
+  setDevice: (device: Device) => void,
 }
 
 //crear el objeto context de react
-const AddDeviceContext = createContext({} as ContextDefinition);
+const EditDeviceContext = createContext({} as ContextDefinition);
 
-interface AddDeviceState {
+interface EditDeviceState {
   //definición del estado
   loading: boolean;
   saving: boolean,
@@ -33,23 +33,27 @@ interface AddDeviceState {
 }
 
 //definir los tipos de acciones que podra ejecutar el context / providers
-type AddDeviceActionType =
+type EditDeviceActionType =
   { type: "Set Loading"; payload: boolean }
   | { type: "Set Saving"; payload: boolean }
-  | { type: "Set Success"; payload: { 
-      success: boolean, 
+  | {
+    type: "Set Success"; payload: {
+      success: boolean,
       device?: Device,
       message: string,
-    } }
+    }
+  }
   | { type: "Set Device"; payload: Device }
   | { type: "Set Message"; payload: string | null }
-  | { type: "Set Errors"; payload: {
+  | {
+    type: "Set Errors"; payload: {
       message: string,
       errors: any,
-  } };
+    }
+  };
 
 //inicializar el state
-const initialState: AddDeviceState = {
+const initialState: EditDeviceState = {
   loading: false,
   saving: false,
   success: false,
@@ -59,20 +63,21 @@ const initialState: AddDeviceState = {
     '',
     undefined,
     undefined
-    ),
-    errors: {},
+  ),
+  errors: {},
 };
 
-function AddDeviceReducer(
-  state: AddDeviceState, 
-  action: AddDeviceActionType
+function EditDeviceReducer(
+  state: EditDeviceState,
+  action: EditDeviceActionType
 ) {
   switch (action.type) {
     //manipular el estado con base a las acciones
     case "Set Message":
-      return { 
-        ...state, 
-        message: action.payload };
+      return {
+        ...state,
+        message: action.payload
+      };
     case "Set Loading":
       return { ...state, loading: action.payload };
     case "Set Saving":
@@ -92,7 +97,7 @@ function AddDeviceReducer(
         message: action.payload.message,
         saving: false,
       }
-      case "Set Success":
+    case "Set Success":
       return {
         ...state,
         success: action.payload.success,
@@ -110,8 +115,8 @@ type Props = {
   children?: ReactNode;
 };
 
-const AddDeviceProvider:FC<Props> = ({ children }) => {
-  const [state, dispatch] = useReducer(AddDeviceReducer, initialState);
+const EditDeviceProvider: FC<Props> = ({ children }) => {
+  const [state, dispatch] = useReducer(EditDeviceReducer, initialState);
 
   function setDeviceProp(property: string, value: any) {
     // mandar el valor al estado device
@@ -123,7 +128,7 @@ const AddDeviceProvider:FC<Props> = ({ children }) => {
       }
     });
   }
-  
+
 
   async function saveDevice(onSaved: Function) {
     const DevicesRepository = new DevicesRepositoryImp(
@@ -134,9 +139,12 @@ const AddDeviceProvider:FC<Props> = ({ children }) => {
       type: 'Set Saving',
       payload: true,
     });
-    
+
+    console.log(state.device);
+
+
     const result = await DevicesRepository.addDevice(state.device);
-    if(result.device) {
+    if (result.device) {
       dispatch({
         type: 'Set Success',
         payload: {
@@ -145,20 +153,12 @@ const AddDeviceProvider:FC<Props> = ({ children }) => {
           message: result.message,
         }
       });
-      /*
-      if (onSaved) {
-      return onSaved(false);
 
-      }
-      console.log(result);*/
-      
       onSaved(state.device);
-
-
       return;
     }
 
-    let errors : any = {};
+    let errors: any = {};
 
     result.errors?.forEach((item) => {
       errors[item.field] = item.error;
@@ -171,32 +171,42 @@ const AddDeviceProvider:FC<Props> = ({ children }) => {
         errors,
       },
     });
+
+    /*test para cerrar al guardar//quitar de acá
     
-    
+onSaved(null);*/
+  }
+
+  function setDevice(device: Device) {
+    dispatch({
+      type: 'Set Device',
+      payload: device
+    })
   }
 
   return (
-    <AddDeviceContext.Provider value={{
-        ...state,
-        
-        //funciones
-        setDeviceProp,
-        saveDevice,
-      }}
+    <EditDeviceContext.Provider value={{
+      ...state,
+
+      //funciones
+      setDeviceProp,
+      saveDevice,
+      setDevice,
+    }}
     >
       {children}
-    </AddDeviceContext.Provider>
+    </EditDeviceContext.Provider>
   );
 }
 
-function useAddDeviceState() {
-  const context = useContext(AddDeviceContext);
+function useEditDeviceState() {
+  const context = useContext(EditDeviceContext);
   if (context === undefined) {
-    throw new Error("useAddDeviceState debe ser usado " + " con un AddDeviceProvider");
+    throw new Error("useEditDeviceState debe ser usado " + " con un EditDeviceProvider");
   }
   return context;
 }
 
-export { AddDeviceProvider, useAddDeviceState };
+export { EditDeviceProvider, useEditDeviceState };
 
 

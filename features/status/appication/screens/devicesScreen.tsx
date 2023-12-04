@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, AppBar } from '@react-native-material/core';
 import { Searchbar, IconButton } from 'react-native-paper';
-import UserCard from './components/userCard';
-import { UsersProvider, useUsersState } from '../provider/usersProvider';
-import AddUserView from './components/addUser';
-import UserEditScreen from './components/userEditModal';
+import StateCard from './components/stateCard';
+import { StatesProvider, useStatesState } from '../providers/statesProvider';
+import AddStateView from './components/addState';
+import StateEditScreen from './components/stateEditModal';
+import StateDeleteScreen from './components/deleteState';
 
-function UsersScreenView() {
+function StatesScreenView() {
   const [modalVisible, setModalVisible] = useState(false);
 
   const showModal = () => {
@@ -15,43 +16,42 @@ function UsersScreenView() {
   };
   
   const { 
+    states, 
     loading,
-    users,
-    userSelected, 
+    stateSelected,
+    stateSelectedDelete,
 
     //actions
-    getUsers,
-    setUserSelected,
-    onUpdatedUser,
-  } = useUsersState();
+    getStates,
+    setStateSelected,
+    setStateDelected,
+    onUpdatedState,
+    onSavedState,
+    onDeleteState
+  } = useStatesState();
 
   const [searchQuery, setSearchQuery] = useState('');
 
   const onChangeSearch = (query: string) => {
     setSearchQuery(query);
+    // Realiza la lógica de filtrado y actualización del estado de los usuarios aquí
   };
 
   useEffect(() => {
-    getUsers();
+    getStates();
   }, []);
 
   const renderCards = () => {
-    if (users == null) {
+    if (states == null) {
       return null;
     }
 
-    const filteredUsers = users.filter(
-      (user) =>
-        `${user.name} ${user.lastName}`.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredStates = states.filter(
+      (state) =>
+        `${state.status}`.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    return filteredUsers.map((user) => ( 
-      <UserCard 
-        key={user.id} 
-        user={user} 
-        onEdit={setUserSelected}
-      />)
-    );
+    return filteredStates.map((state) => <StateCard key={state.id} state={state} onEdit={setStateSelected} onDelete={setStateDelected}/>);
   };
 
   if (loading) {
@@ -64,9 +64,9 @@ function UsersScreenView() {
 
   return (
     <View style={styles.container}>
-      <AppBar title="Usuarios registrados" color="#0559B7" tintColor="white" centerTitle={true} />
+      <AppBar title="Dispositivos registrados" color="#0559B7" tintColor="white" centerTitle={true} />
       <Searchbar
-        placeholder="Buscar usuarios"
+        placeholder="Buscar dispositivos"
         onChangeText={onChangeSearch}
         value={searchQuery}
         style={styles.searchBar}
@@ -78,30 +78,32 @@ function UsersScreenView() {
 
       {/* Botón de agregar */}
       <IconButton
-        icon="account-plus"
+        icon="plus"
         onPress={showModal}
         style={styles.addButton}
         iconColor="#ffffff"
         size={30}
       />
-      {!!userSelected ? (
-        <UserEditScreen
-          userEdit={userSelected}
-          modalVisible={!!userSelected}
-          onSaved={onUpdatedUser}
-          onCancelEdit={setUserSelected}
-        />
-      ): null}
-      
-      <AddUserView modalVisible={modalVisible} setModalVisible={setModalVisible} />
-    </View>
+      <AddStateView modalVisible={modalVisible} setModalVisible={setModalVisible} onSaved = {onSavedState} />
+
+      {!!stateSelected ? (
+      <StateEditScreen stateEdit={stateSelected} modalVisible={!!stateSelected} onSaved={onUpdatedState} onCancelEdit={setStateSelected} />
+      ) : null}
+
+
+       {!!stateSelectedDelete ? (
+      <StateDeleteScreen stateDelete={stateSelectedDelete} modalVisible={!!stateSelectedDelete} onDeleted={onDeleteState} onCancelDelete={setStateDelected}/>
+
+      ) : null}
+
+       </View>
   );
 }
 
-const UserScreen = (props: any) => (
-  <UsersProvider>
-    <UsersScreenView {...props} />
-  </UsersProvider>
+const StateScreen = (props: any) => (
+  <StatesProvider>
+    <StatesScreenView {...props} />
+  </StatesProvider>
 );
 
 const styles = StyleSheet.create({
@@ -135,4 +137,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserScreen;
+export default StateScreen;

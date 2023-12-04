@@ -17,6 +17,12 @@ function OrdersScreenView() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState(''); // Estado para mantener el estado seleccionado de los botones
 
+
+
+  console.log("////////////////////////////////");
+  console.log(orders);
+  
+
   const onChangeSearch = (query: string) => {
     setSearchQuery(query);
     // Realiza la lógica de filtrado y actualización del estado de las órdenes aquí

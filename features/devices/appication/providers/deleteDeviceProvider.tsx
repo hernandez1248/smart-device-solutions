@@ -1,7 +1,7 @@
 import { FC, ReactNode, createContext, useContext, useReducer } from "react";
-import User from "../../domain/entities/user";
-import UsersRepositoryImp from "../../infraestructure/repositories/usersRepositoryImp";
-import UsersDatasourceImp from "../../infraestructure/datasources/usersDatasourceImp";
+import Device from "../../domain/entities/device";
+import DevicesRepositoryImp from "../../infraestructure/repositories/devicesRepositoryImp";
+import DevicesDatasourceImp from "../../infraestructure/datasources/devicesDatasourceImp";
 
 //definir la estructura que tendra mi context
 interface ContextDefinition {
@@ -10,37 +10,38 @@ interface ContextDefinition {
   saving: boolean,
   success: boolean,
   message?: string | null, 
-  user: User,
+  device: Device,
   errors: any,
 
   // acciones que tendrá mi context
-  setUserProp: (property: string, value: any) => void,
-  saveUser: (onSaved: Function)=> void,
+  setDeviceProp: (property: string, value: any) => void,
+  deleteDevice: (onDeleted: Function)=> void,
+  setDevice:(device: Device) => void,
 }
 
 //crear el objeto context de react
-const AddUserContext = createContext({} as ContextDefinition);
+const DeleteDeviceContext = createContext({} as ContextDefinition);
 
-interface AddUserState {
-  //definición del estado
+interface DeleteDeviceState {
+  
   loading: boolean;
   saving: boolean,
   success: boolean,
   message?: string | null,
-  user: User,
+  device: Device,
   errors: any,
 }
 
 //definir los tipos de acciones que podra ejecutar el context / providers
-type AddUserActionType =
+type DeleteDeviceActionType =
   { type: "Set Loading"; payload: boolean }
   | { type: "Set Saving"; payload: boolean }
   | { type: "Set Success"; payload: { 
       success: boolean, 
-      user?: User,
+      device?: Device,
       message: string,
     } }
-  | { type: "Set User"; payload: User }
+  | { type: "Set Device"; payload: Device }
   | { type: "Set Message"; payload: string | null }
   | { type: "Set Errors"; payload: {
       message: string,
@@ -48,30 +49,25 @@ type AddUserActionType =
   } };
 
 //inicializar el state
-const initialState: AddUserState = {
+const initialState: DeleteDeviceState = {
   loading: false,
   saving: false,
   success: false,
   message: null,
-  user: new User(
-    '', 
-    '', 
-    '', 
-    '',
+  device: new Device(
     '',
     '',
     undefined,
-    ''
+    undefined
     ),
     errors: {},
 };
 
-function AddUserReducer(
-  state: AddUserState, 
-  action: AddUserActionType
+function DeleteDeviceReducer(
+  state: DeleteDeviceState, 
+  action: DeleteDeviceActionType
 ) {
   switch (action.type) {
-    //manipular el estado con base a las acciones
     case "Set Message":
       return { 
         ...state, 
@@ -83,10 +79,10 @@ function AddUserReducer(
         ...state,
         saving: action.payload,
       }
-    case "Set User":
+    case "Set Device":
       return {
         ...state,
-        user: action.payload,
+        device: action.payload,
       }
     case "Set Errors":
       return {
@@ -102,7 +98,7 @@ function AddUserReducer(
         message: action.payload.message,
         errors: {},
         saving: false,
-        //user: action.payload.user || state.user,
+        //device: action.payload.device || state.device,
       }
     default:
       return state;
@@ -113,45 +109,46 @@ type Props = {
   children?: ReactNode;
 };
 
-const AddUserProvider:FC<Props> = ({ children }) => {
-  const [state, dispatch] = useReducer(AddUserReducer, initialState);
+const DeleteDeviceProvider:FC<Props> = ({ children }) => {
+  const [state, dispatch] = useReducer(DeleteDeviceReducer, initialState);
 
-  function setUserProp(property: string, value: any) {
-    // mandar el valor al estado user
+  function setDeviceProp(property: string, value: any) {
+    // mandar el valor al estado device
     dispatch({
-      type: 'Set User',
+      type: 'Set Device',
       payload: {
-        ...state.user,
+        ...state.device,
         [property]: value,
       }
     });
   }
+  
 
-  async function saveUser(onSaved: Function) {
-    const usersRepository = new UsersRepositoryImp(
-      new UsersDatasourceImp
+  async function deleteDevice(onDeleted: Function) {
+    const DevicesRepository = new DevicesRepositoryImp(
+      new DevicesDatasourceImp
     )
     // envir los datos al backend
     dispatch({
       type: 'Set Saving',
       payload: true,
     });
+    onDeleted(null)
     
-    const result = await usersRepository.addUser(state.user);
-    if(result.user) {
+    const result = await DevicesRepository.deleteDevice(state.device);
+    if(result.device) {
       dispatch({
         type: 'Set Success',
         payload: {
           success: true,
-          user: result.user,
+          device: result.device,
           message: result.message,
         }
       });
-      if (onSaved) {
-        onSaved(false);
-      }
-      console.log(result);
+      
+      
 
+      onDeleted(state.device);
 
       return;
     }
@@ -173,28 +170,37 @@ const AddUserProvider:FC<Props> = ({ children }) => {
     
   }
 
+  function setDevice(device:Device){
+    
+    dispatch({
+      type: 'Set Device',
+      payload: device
+    });
+  }
+
   return (
-    <AddUserContext.Provider value={{
+    <DeleteDeviceContext.Provider value={{
         ...state,
         
         //funciones
-        setUserProp,
-        saveUser,
+        setDeviceProp,
+        deleteDevice,
+        setDevice,
       }}
     >
       {children}
-    </AddUserContext.Provider>
+    </DeleteDeviceContext.Provider>
   );
 }
 
-function useAddUserState() {
-  const context = useContext(AddUserContext);
+function useDeleteDeviceState() {
+  const context = useContext(DeleteDeviceContext);
   if (context === undefined) {
-    throw new Error("useAddUserState debe ser usado " + " con un AddUserProvider");
+    throw new Error("useDeleteDeviceState debe ser usado " + " con un DeleteDeviceProvider");
   }
   return context;
 }
 
-export { AddUserProvider, useAddUserState };
+export { DeleteDeviceProvider, useDeleteDeviceState };
 
 

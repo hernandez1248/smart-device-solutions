@@ -17,7 +17,7 @@ class OrdersDatasourceImp extends OrdersDatasource {
             .then((response) => response.json())
             .then((response) => {
             
-            const result = new AddOrdersResult(response.message, response.order || null);
+            const result = new AddOrdersResult(response.message, response.newIdOrden || null);
             result.errors = response.errors || null;
             result.error = response.error || false;
             console.log(response);
@@ -36,18 +36,19 @@ class OrdersDatasourceImp extends OrdersDatasource {
             
 
             const orders = response.map((item : any) => new Order(
-                item.id, 
                 item.date,
                 item.fullName,
                 item.phone,
-                item.servicesId,
-                item.deviceId,
                 item.color,
                 item.observations,
+                item.detalles,
                 item.fullPay,
                 item.advancePay,
                 item.remainingPay,
                 item.userId,
+                item.id, 
+                item.servicesId,
+                item.deviceId,
             )
             );
 

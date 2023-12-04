@@ -1,35 +1,31 @@
 import React, { useState } from "react";
 import { View, Modal, Text, TextInput, StyleSheet, Pressable, Dimensions, Alert } from "react-native";
 import RNPickerSelect from 'react-native-picker-select';
-import { AddDeviceProvider, useAddDeviceState } from "../../providers/addDevicesProvider";
+import { AddStateProvider, useAddStateState } from "../../providers/addStatesProvider";
 
-interface AddDeviceViewProps {
+interface AddStateViewProps {
   modalVisible: boolean;
   onSaved: Function;
   setModalVisible: (visible: boolean) => void;
 }
 
-const AddDeviceView: React.FC<AddDeviceViewProps> = ({ modalVisible, onSaved, setModalVisible }) => {
+const AddStateView: React.FC<AddStateViewProps> = ({ modalVisible, onSaved, setModalVisible }) => {
   const {
     message,
     loading,
     saving,
     success,
-    device,
+    state,
     errors,
 
-    setDeviceProp,
-    saveDevice,
-  } = useAddDeviceState();
-
-  
+    setStateProp,
+    saveState,
+  } = useAddStateState();
 
 
+  const handleSaveState = async () => {
 
-
-  const handleSaveDevice = async () => {
-
-    saveDevice(() => {
+    saveState(() => {
       setModalVisible(false); // Cierra el modal primero
 
 
@@ -71,10 +67,10 @@ const AddDeviceView: React.FC<AddDeviceViewProps> = ({ modalVisible, onSaved, se
               <Text style={styles.label}>Marca:</Text>
               <TextInput
                 style={[styles.textInput, (errors?.brand ? styles.textError : null)]}
-                placeholder=" Ingresa la marca del dispositivo"
-                value={device?.brand || ""}
+                placeholder=" Ingresa el estado de la orden"
+                value={state?.status || ""}
                 onChangeText={(text) => {
-                  setDeviceProp("brand", text);
+                  setStateProp("brand", text);
                 }}
                 textContentType="name"
               ></TextInput>
@@ -86,10 +82,10 @@ const AddDeviceView: React.FC<AddDeviceViewProps> = ({ modalVisible, onSaved, se
               <Text style={styles.label}>Modelo:</Text>
               <TextInput
                 style={[styles.textInput, (errors?.model ? styles.textError : null)]}
-                placeholder=" Ingresa el modelo del dispositivo"
-                value={device?.model || ""}
+                placeholder=" Ingresa la descripcion de la orden"
+                value={state?.description || ""}
                 onChangeText={(text) => {
-                  setDeviceProp("model", text);
+                  setStateProp("model", text);
                 }}
                 textContentType="name"
               ></TextInput>
@@ -97,32 +93,6 @@ const AddDeviceView: React.FC<AddDeviceViewProps> = ({ modalVisible, onSaved, se
                 <Text style={styles.textError}>{errors.model}</Text>
               ) : null}
             </View>
-
-
-            <View>
-              <Text style={styles.label}>Categoria a la que pertenece:</Text>
-              <RNPickerSelect
-                onValueChange={(value) => setDeviceProp("deviceCategoryId", value)}
-                items={[
-                  { label: 'Celular', value: '1' },
-                  { label: 'Tableta', value: '2' },
-                  { label: 'PC', value: '3' },
-                  { label: 'Laptop', value: '4' },
-
-                ]}
-                style={{
-                  inputIOS: styles.textInput,
-                  inputAndroid: styles.textInput,
-                }}
-                value={device?.deviceCategoryId}
-                placeholder={{
-                  label: 'Elige una categoria',
-                  value: null,
-                }}
-              />
-              {errors?.deviceCategoryId ? <Text style={styles.textError}>{errors.deviceCategoryId}</Text> : null}
-            </View>
-
 
 
             <View style={styles.buttonsContainer}>
@@ -136,8 +106,8 @@ const AddDeviceView: React.FC<AddDeviceViewProps> = ({ modalVisible, onSaved, se
 
               <Pressable
                 style={[styles.button, styles.buttonSaving]}
-                //onPress={() => saveDevice(onSaved)}
-                onPress={handleSaveDevice}
+                //onPress={() => saveState(onSaved)}
+                onPress={handleSaveState}
               >
                 <Text style={styles.textStyle}>Guardar</Text>
               </Pressable>
@@ -149,10 +119,10 @@ const AddDeviceView: React.FC<AddDeviceViewProps> = ({ modalVisible, onSaved, se
   );
 };
 
-const AddDeviceScreen = (props: AddDeviceViewProps) => (
-  <AddDeviceProvider>
-    <AddDeviceView {...props} />
-  </AddDeviceProvider>
+const AddStateScreen = (props: AddStateViewProps) => (
+  <AddStateProvider>
+    <AddStateView {...props} />
+  </AddStateProvider>
 );
 
 const { width } = Dimensions.get("window"); // Obtiene el ancho de la pantalla
@@ -234,4 +204,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddDeviceScreen;
+export default AddStateScreen;

@@ -1,26 +1,26 @@
 import { StyleSheet, Text, View,  } from 'react-native';
-import Device from "../../../domain/entities/device";
+import State from "../../../domain/entities/state";
 import { IconButton } from 'react-native-paper';
 
 type CardProps ={
-    device: Device,
+    state: State,
     onEdit?: Function,
     onDelete?: Function,
 }
 
-const DeviceCard: React.FC<CardProps>= ({device, onEdit, onDelete}) => {
+const StateCard: React.FC<CardProps>= ({state, onEdit, onDelete}) => {
       
-  //console.log(device.model);
+  //console.log(state.model);
 
   const handleEdit = () => {
     if(onEdit){      
-       onEdit(device);
+       onEdit(state);
     }
   }
 
   const handleDelete = () => {
     if(onDelete){      
-       onDelete(device);
+       onDelete(state);
     }
   }
   
@@ -28,10 +28,10 @@ const DeviceCard: React.FC<CardProps>= ({device, onEdit, onDelete}) => {
       <View>
       <View style={styles.row}>
         <Text style={styles.column}>
-          {device.brand}
+          {state.date}
         </Text>
         <Text style={[styles.column2, styles.boldText]}>
-          {device.model}
+          {state.status}
         </Text>
         <View style={styles.actions}>
           <IconButton
@@ -60,7 +60,7 @@ const DeviceCard: React.FC<CardProps>= ({device, onEdit, onDelete}) => {
 }
 
 
-export default DeviceCard;
+export default StateCard;
 
 const styles = StyleSheet.create({
 row: {
