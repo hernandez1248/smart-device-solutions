@@ -45,7 +45,7 @@ const EditComponentView: React.FC<EditComponentViewProps> = ({
   //           ]);
   //       }, 500); // Puedes ajustar el tiempo de retardo según tus necesidades
 
-  //       onSaved()
+  //       onSaved(component)
   //   })
   // };
 
@@ -141,7 +141,6 @@ const EditComponentView: React.FC<EditComponentViewProps> = ({
             </View>
 
             <View style={styles.buttonsContainer}>
-      
               <Pressable
                 style={[styles.button, styles.buttonClose]}
                 onPress={() => {
@@ -153,6 +152,8 @@ const EditComponentView: React.FC<EditComponentViewProps> = ({
               
               <Pressable
                 style={[styles.button, styles.buttonSaving]}
+                // onPress={handleSaveComponent}
+
                 onPress={() => {
                   saveComponent(onSaved);
                   setTimeout(() => {

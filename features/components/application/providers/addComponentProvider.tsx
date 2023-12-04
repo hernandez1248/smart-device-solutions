@@ -56,7 +56,6 @@ type AddComponentActionType =
         '',
         '',
         '',
-        '',
         undefined,
     ),
     errors: {
@@ -154,10 +153,12 @@ const AddComponentProvider: FC<Props> = ({children}) => {
             },
         });
 
-        if (onSaved) {
-            onSaved(false);
-          }
-          console.log(result);
+        // if (onSaved) {
+        //     onSaved(false);
+        //   }
+        //   console.log(result);
+
+        onSaved(state.component);
 
         return;
         }

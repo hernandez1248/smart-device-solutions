@@ -71,7 +71,7 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
               ) : null }
             </View>
 
-            <View>
+            {/* <View>
               <Text style={styles.label}>Imagen:</Text>
               <TextInput
                 style={[styles.textInput, (errors?.image ? styles.textError : null)]}
@@ -85,7 +85,7 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
               {errors?.phone ? (
                 <Text style={styles.textError}>{errors.image}</Text>
               ) : null }
-            </View>
+            </View> */}
 
             <View>
               <Text style={styles.label}>Precio:</Text>

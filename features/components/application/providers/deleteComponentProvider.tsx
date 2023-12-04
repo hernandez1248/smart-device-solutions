@@ -57,7 +57,6 @@ type DeleteComponentActionType =
         '',
         '',
         '',
-        '',
         undefined,
         ),
         errors: {
@@ -93,23 +92,23 @@ type DeleteComponentActionType =
                 ...state,
                 component: action.payload,
             }
-            case 'Set Errors':
-                return {
-                  ...state,
-                  errors: action.payload.errors || {},
-                  message: action.payload.message,
-                  saving: false,
-                }
-              case "Set Success":
-                return {
-                  ...state,
-                  success: action.payload.success,
-                  message: action.payload.message,
-                  errors: {},
-                  saving: false,
-                  // user: action.payload.user || state.user,
-                  
-                }
+        case 'Set Errors':
+            return {
+                ...state,
+                errors: action.payload.errors || {},
+                message: action.payload.message,
+                saving: false,
+            }
+        case "Set Success":
+            return {
+                ...state,
+                success: action.payload.success,
+                message: action.payload.message,
+                errors: {},
+                saving: false,
+                // user: action.payload.user || state.user,
+                
+            }
         default:
             return state;
     }

@@ -66,12 +66,12 @@ function ComponentsScreenView() {
     components,
     componentSelected,
     componentSelectedDelete, 
-    componentView,
+    // componentView,
 
     getComponents,
     setComponentSelected,
     setComponentDelected,
-    setComponentView,
+    // setComponentView,
     onUpdatedComponent,
     onSavedComponent,
     onDeleteComponent,
@@ -107,7 +107,7 @@ function ComponentsScreenView() {
         key={component.id} 
         component={component}
         onEdit={setComponentSelected}
-        onView={setComponentView}
+        // onView={setComponentView}
         onDelete={setComponentDelected}
       />)
     );
@@ -158,6 +158,12 @@ function ComponentsScreenView() {
         size={30}
       />
   
+      <AddComponent 
+        modalVisible={modalVisible} 
+        setModalVisible={setModalVisible} 
+        onSaved = {onSavedComponent}
+      />
+
       {!!componentSelected ? (
         <EditComponent 
           componentEdit={componentSelected}
@@ -167,12 +173,6 @@ function ComponentsScreenView() {
         />
       ) : null }
 
-      <AddComponent 
-        modalVisible={modalVisible} 
-        setModalVisible={setModalVisible} 
-        onSaved = {onSavedComponent}
-      />
-      
       {!!componentSelectedDelete ? (
       <DeleteComponent 
         componentDelete={componentSelectedDelete} 
@@ -182,14 +182,14 @@ function ComponentsScreenView() {
       />
       ) : null}
 
-      {!!componentView ? (
+      {/* {!!componentView ? (
         <ViewComponent
           componentEdit={componentView}
           modalVisible={!!componentView}
           onSaved={onUpdatedComponent}
           onCancelEdit={setComponentView}
         />
-      ): null}
+      ): null} */}
 
 
 

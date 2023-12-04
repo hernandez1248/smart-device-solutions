@@ -8,14 +8,14 @@ type CardProps = {
   component: Component,
   onEdit?: Function,
   onDelete?: Function,
-  onView?: Function,
+  // onView?: Function,
 };
 
 const ComponentCard: React.FC<CardProps> = ({
   component,
   onEdit,
   onDelete,
-  onView,
+  // onView,
 
 }) => {
   const [menuVisible, setMenuVisible] = useState(false);
@@ -37,15 +37,15 @@ const ComponentCard: React.FC<CardProps> = ({
     }
   };
 
-  const handleView = () => {
-    /*  setUserToEdit(user)
-     setModalUpdateVisible(true); */
+  // const handleView = () => {
+  //   /*  setUserToEdit(user)
+  //    setModalUpdateVisible(true); */
      
-     toggleMenu();
-     if (onView) {
-       onView(component);
-     }
-   };
+  //    toggleMenu();
+  //    if (onView) {
+  //      onView(component);
+  //    }
+  //  };
  
 
   const handleDelete = () => {
@@ -58,12 +58,12 @@ const ComponentCard: React.FC<CardProps> = ({
   return (
     <View>
       <View style={styles.row}>
-        <View style={{ borderRadius: 15, overflow: 'hidden' }}>
+        {/* <View style={{ borderRadius: 15, overflow: 'hidden' }}>
           <Image
             source={{ uri: `${component.image}` }}
             style={{ width: 35, height: 35 }}
           />
-        </View>
+        </View> */}
         <Text style={styles.column}>
           {component.name}
         </Text>
@@ -104,7 +104,7 @@ const ComponentCard: React.FC<CardProps> = ({
               onPress={() => {
                 // Acción al presionar "Ver"
                 toggleMenu();
-                handleView();
+                // handleView();
               }}
             >
               <View style={styles.menuView}>

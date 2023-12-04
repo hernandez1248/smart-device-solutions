@@ -57,7 +57,6 @@ type EditComponentActionType =
         '',
         '',
         '',
-        '',
         undefined,
         ),
         errors: {
@@ -196,7 +195,8 @@ const EditComponentProvider: FC<Props> = ({children}) => {
         // });
     
         //test para guardar, //quitar de aca
-        onSaved(state.component);
+        
+        // onSaved(state.component);
     }
 
     function setComponent(component: Component){

@@ -10,14 +10,14 @@ interface ContextDefinition {
     loading: boolean;
     components: Component[];
     componentSelected: Component | null;
-    componentView: Component | null,
+    // componentView: Component | null,
     componentSelectedDelete: Component | null;
 
     //acciones que tendra mi context
     getComponents: () => void;
     setComponentSelected: (component: Component | null) => void;
     setComponentDelected: (component: Component | null) => void;
-    setComponentView: (component: Component | null) => void;
+    // setComponentView: (component: Component | null) => void;
 
     onSavedComponent: (newComponent: Component) => void;
     onUpdatedComponent: (component: Component) => void;
@@ -36,7 +36,7 @@ interface ComponentsState {
     loading: boolean;
     components: Component[];
     componentSelected: Component | null;
-    componentView: Component | null,
+    // componentView: Component | null,
     componentSelectedDelete: Component | null;
 
 }
@@ -46,7 +46,7 @@ type ComponentsActionType =
 { type: 'Set Loading', payload: boolean }
 | { type: 'Set Data', payload: ComponentsResult }
 | { type: 'Set Component Selected', payload: Component | null }
-| { type: "Set Component View"; payload: Component | null }
+// | { type: "Set Component View"; payload: Component | null }
 | {type: 'Set Component Selected Deleted', payload: Component | null};
 
 ;
@@ -57,7 +57,7 @@ const initialState : ComponentsState = {
     components: [],
     componentSelected: null,
     componentSelectedDelete: null,
-    componentView: null,
+    // componentView: null,
 }
 //definicion del reducer
 //se encargara de manipular el state con base en
@@ -82,11 +82,11 @@ function componentsReducer( state: ComponentsState, action: ComponentsActionType
                 ...state,
                 componentSelected: action.payload,
             }
-        case 'Set Component View':
-            return {
-                ...state,
-                componentView: action.payload,
-            }
+        // case 'Set Component View':
+        //     return {
+        //         ...state,
+        //         componentView: action.payload,
+        //     }
         case 'Set Component Selected Deleted':
             return {
                 ...state,
@@ -136,14 +136,14 @@ function componentsReducer( state: ComponentsState, action: ComponentsActionType
             });
         }
 
-        function setComponentView (component: Component | null) {
-            console.log(component);
+        // function setComponentView (component: Component | null) {
+        //     console.log(component);
             
-            dispatch({
-              type: "Set Component View",
-              payload: component,
-            });
-        }
+        //     dispatch({
+        //       type: "Set Component View",
+        //       payload: component,
+        //     });
+        // }
         
         function setComponentDelected (component: Component | null) {
             console.log("componente:", component);
@@ -222,7 +222,7 @@ function componentsReducer( state: ComponentsState, action: ComponentsActionType
                 getComponents,
                 setComponentSelected,
                 setComponentDelected,
-                setComponentView,
+                // setComponentView,
                 onUpdatedComponent,
                 onSavedComponent,
                 onDeleteComponent,
