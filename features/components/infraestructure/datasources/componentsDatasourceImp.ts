@@ -1,3 +1,4 @@
+import backendConfig from "../../../../config/backend/config";
 import ComponentsDatasource from "../../domain/datasources/componentsDatasource";
 import AddComponentResult from "../../domain/entities/addComponentResult";
 import Component from "../../domain/entities/component";
@@ -56,7 +57,7 @@ class ComponentsDatasourceImp extends ComponentsDatasource {
 
         const components = response.map((item : any) => new Component(
             item.name,
-            // item.image,
+            item.image,
             item.price,
             item.stock,
             item.deviceId,

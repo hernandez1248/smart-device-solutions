@@ -58,12 +58,12 @@ const ComponentCard: React.FC<CardProps> = ({
   return (
     <View>
       <View style={styles.row}>
-        {/* <View style={{ borderRadius: 15, overflow: 'hidden' }}>
+        <View style={{ borderRadius: 15, overflow: 'hidden' }}>
           <Image
             source={{ uri: `${component.image}` }}
             style={{ width: 35, height: 35 }}
           />
-        </View> */}
+        </View>
         <Text style={styles.column}>
           {component.name}
         </Text>
@@ -147,17 +147,19 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20
+    marginTop: 20,
+    height: 'auto'
   },
   column: {
-    flex: 1,
+    width: '40%',
     fontSize: 14,
-    marginTop: 12
+    marginTop: 12,
+    marginLeft: 10,
   },
   column2: {
-    flex: 1,
+    width: '25%',
     fontSize: 14,
-    marginLeft: 50, // Ajusta el espacio entre columnas aquí
+    // marginLeft: 2, // Ajusta el espacio entre columnas aquí
     marginTop: 12
   },
   column3: {
