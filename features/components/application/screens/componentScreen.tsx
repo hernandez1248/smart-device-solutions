@@ -227,19 +227,20 @@ const styles = StyleSheet.create({
   column: {
     flex: 1,
     marginLeft: 22,
+    marginRight: 50,
     fontSize: 14,
     marginTop: 12
   },
   column2: {
     flex: 1,
     fontSize: 14,
-    marginLeft: 47, // Ajusta el espacio entre columnas aquí
+    marginLeft: 50, // Ajusta el espacio entre columnas aquí
     marginTop: 12
   },
   column3: {
     flex: 1,
     fontSize: 14,
-    marginRight: 57, // Ajusta el espacio entre columnas aquí
+    marginRight: 10, // Ajusta el espacio entre columnas aquí
     marginTop: 12
   },
   boldText: {

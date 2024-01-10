@@ -2,12 +2,14 @@
 class Component {
     id?: number;
     name: string;
+    image: string;
     price: string;
     stock: string;
     deviceId: string;
 
     constructor(
         name: string,
+        image: string,
         price: string,
         stock: string,
         deviceId: string,
@@ -15,6 +17,7 @@ class Component {
     ) {
         this.id = id;
         this.name = name;
+        this.image = image;
         this.price = price;
         this.stock = stock;
         this.deviceId = deviceId;

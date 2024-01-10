@@ -56,6 +56,7 @@ type AddComponentActionType =
         '',
         '',
         '',
+        '',
         undefined,
     ),
     errors: {

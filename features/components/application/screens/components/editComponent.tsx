@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { View, Modal, Text, TextInput, StyleSheet, Pressable, Dimensions, Alert } from "react-native";
 import { EditComponentProvider, useEditComponentState } from "../../providers/editComponentProvider";
 import Component from "../../../domain/entities/component";
-
+import RNPickerSelect from 'react-native-picker-select';
+import { DevicesProvider, useDevicesState } from "../../../../devices/appication/providers/devicesProvider";
 
 interface EditComponentViewProps {
   componentEdit: Component,
@@ -35,6 +36,12 @@ const EditComponentView: React.FC<EditComponentViewProps> = ({
   useEffect(() => {
     setComponent(componentEdit)
   }, [componentEdit]);
+
+  const { devices, getDevices } = useDevicesState();
+
+  useEffect(() => {
+    getDevices();
+  }, []);
 
   // const handleSaveComponent = async () => {
   //   saveComponent(() => {
@@ -79,7 +86,7 @@ const EditComponentView: React.FC<EditComponentViewProps> = ({
                 <Text style={styles.textError}>{errors.name}</Text>
               ) : null }
             </View>
-            {/* <View>
+            <View>
               <Text style={styles.label}>Imagen:</Text>
               <TextInput
                 style={[styles.textInput, (errors?.image ? styles.textError : null)]}
@@ -93,7 +100,7 @@ const EditComponentView: React.FC<EditComponentViewProps> = ({
               {errors?.image ? (
                 <Text style={styles.textError}>{errors.image}</Text>
               ) : null }
-            </View> */}
+            </View>
             <View>
               <Text style={styles.label}>Precio:</Text>
               <TextInput
@@ -124,7 +131,7 @@ const EditComponentView: React.FC<EditComponentViewProps> = ({
                 <Text style={styles.textError}>{errors.stock}</Text>
               ) : null }
             </View>
-            <View>
+            {/* <View>
               <Text style={styles.label}>Dispositivo al que pertenece:</Text>
               <TextInput
                 style={[styles.textInput, (errors?.deviceId ? styles.textError : null)]}
@@ -138,6 +145,30 @@ const EditComponentView: React.FC<EditComponentViewProps> = ({
               {errors?.deviceId ? (
                 <Text style={styles.textError}>{errors.deviceId}</Text>
               ) : null }
+            </View> */}
+            <View>
+              <Text style={styles.label}>Dispositivo al que pertenece:</Text>
+              <RNPickerSelect
+                onValueChange={(value) => setComponentProp("deviceId", value)}
+                items={[
+                  ...(devices && devices.length > 0
+                    ? devices.map((device) => ({
+                        label: device.brand+' '+device.model,
+                        value: device.id,
+                      }))
+                    : []),
+                ]}
+                style={{
+                  inputIOS: styles.textInput,
+                  inputAndroid: styles.textInput,
+                }}
+                value={component?.deviceId}
+                placeholder={{
+                  label: 'Elige un dispositivo',
+                  value: null,
+                }}
+              />
+              {errors?.deviceId ? <Text style={styles.textError}>{errors.deviceId}</Text> : null}
             </View>
 
             <View style={styles.buttonsContainer}>
@@ -175,7 +206,9 @@ const EditComponentView: React.FC<EditComponentViewProps> = ({
 
 const EditComponent = (props: EditComponentViewProps) => (
   <EditComponentProvider>
-    <EditComponentView {...props} />
+    <DevicesProvider>
+      <EditComponentView {...props} />
+    </DevicesProvider>
   </EditComponentProvider>
 );
 
@@ -203,8 +236,12 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   textInput: {
+    borderRadius: 5,
     borderWidth: .5,
     height: 35,
+    borderColor: "gray",
+    // color: "gray",
+    paddingHorizontal: 10
   },
   buttonsContainer: {
     flexDirection: "row",

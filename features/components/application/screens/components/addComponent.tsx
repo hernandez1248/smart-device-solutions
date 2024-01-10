@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { View, Modal, Text, TextInput, StyleSheet, Pressable, Dimensions, Alert } from "react-native";
 import { AddComponentProvider, useAddComponentState } from "../../providers/addComponentProvider";
+// import { useDevicesState } from "../../../../devices/appication/providers/devicesProvider";
+import RNPickerSelect from 'react-native-picker-select';
+import { DevicesProvider, useDevicesState } from "../../../../devices/appication/providers/devicesProvider";
 
 interface AddComponentViewProps {
   modalVisible: boolean;
@@ -45,7 +48,8 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
         ]);
       }, 500); // Puedes ajustar el tiempo de retardo según tus necesidades
 
-    // onSaved()
+      onSaved()
+    })
   };
 
   return (
@@ -79,7 +83,7 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
               ) : null}
             </View>
 
-            {/* <View>
+            <View>
               <Text style={styles.label}>Imagen:</Text>
               <TextInput
                 style={[styles.textInput, (errors?.image ? styles.textError : null)]}
@@ -90,10 +94,10 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
                 }}
                 textContentType="name"
               ></TextInput>
-              {errors?.phone ? (
+              {errors?.image ? (
                 <Text style={styles.textError}>{errors.image}</Text>
               ) : null }
-            </View> */}
+            </View>
 
             <View>
               <Text style={styles.label}>Precio:</Text>
@@ -127,10 +131,6 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
               ) : null}
             </View>
 
-
-
-
-
             <View>
               <Text style={styles.label}>Dispositivo al que pertenece:</Text>
               <RNPickerSelect
@@ -138,7 +138,7 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
                 items={[
                   ...(devices && devices.length > 0
                     ? devices.map((device) => ({
-                        label: 'Marca: '+device.brand+' Modelo: '+device.model,
+                        label: device.brand+' '+device.model,
                         value: device.id,
                       }))
                     : []),
@@ -155,10 +155,6 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
               />
               {errors?.deviceId ? <Text style={styles.textError}>{errors.deviceId}</Text> : null}
             </View>
-
-
-
-
 
             <View style={styles.buttonsContainer}>
 
@@ -186,7 +182,7 @@ const AddComponentView: React.FC<AddComponentViewProps> = ({
 const AddComponent = (props: any) => (
   <AddComponentProvider>
     <DevicesProvider>
-    <AddComponentView {...props} />
+      <AddComponentView {...props} />
     </DevicesProvider>
   </AddComponentProvider>
 );
@@ -215,8 +211,12 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   textInput: {
+    borderRadius: 5,
     borderWidth: .5,
     height: 35,
+    borderColor: "gray",
+    // color: "gray",
+    paddingHorizontal: 10
   },
   buttonsContainer: {
     flexDirection: "row",
